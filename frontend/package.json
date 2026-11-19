@@ -1,0 +1,26 @@
+{
+  "name": "project-management-dashboard",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "pnpm@11.25.0",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "react": ">=19 <20",
+    "react-dom": ">=19 <20"
+  },
+  "devDependencies": {
+    "@types/node": ">=24 <25",
+    "@types/react": ">=19 <20",
+    "@types/react-dom": ">=19 <20",
+    "@vitejs/plugin-react": ">=5 <6",
+    "@playwright/test": ">=1.55 <2",
+    "typescript": ">=5.8 <6",
+    "vite": ">=7 <8"
+  }
+}

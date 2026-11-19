@@ -1,0 +1,28 @@
+{
+  "name": "Library Management System",
+  "execution_mode": "simulation",
+  "seed": 42,
+  "plan": {
+    "version": 1,
+    "tasks": [
+      {"id": "1", "title": "Catalog management", "duration_days": 2, "budget_cents": 10000, "resource_id": "developer"},
+      {"id": "2", "title": "Reader management", "duration_days": 1, "budget_cents": 5000, "resource_id": "developer"},
+      {"id": "3", "title": "Borrowing and returns", "duration_days": 2, "budget_cents": 10000, "resource_id": "developer"},
+      {"id": "4", "title": "Catalog search", "duration_days": 1, "budget_cents": 5000, "resource_id": "developer"}
+    ],
+    "dependencies": [
+      {"predecessor": "1", "successor": "3"},
+      {"predecessor": "2", "successor": "3"},
+      {"predecessor": "1", "successor": "4"}
+    ],
+    "resources": [{"id": "developer", "capacity": 1, "rate_cents_per_day": 5000}]
+  },
+  "scenario": {
+    "version": "lms-v1",
+    "forced_first_test_failures": ["3"],
+    "defect_probability": 0.0,
+    "max_days": 120,
+    "max_repairs": 3,
+    "change_trigger_day": 3
+  }
+}

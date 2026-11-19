@@ -1,0 +1,14 @@
+.venv/
+.venv-before-move/
+__pycache__/
+.pytest_cache/
+*.egg-info/
+*.db
+*.db-shm
+*.db-wal
+.env
+node_modules/
+dist/
+*.tsbuildinfo
+frontend/test-results/
+frontend/playwright-report/
