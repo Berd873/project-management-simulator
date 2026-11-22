@@ -3,7 +3,7 @@ import json
 from typing import TypedDict
 
 from langgraph.graph import END, START, StateGraph
-from langgraph.types import Command
+from langgraph.types import Command, interrupt
 from sqlalchemy import select
 
 from ..models import Baseline,Run,SimulationRun,SimulationTick
@@ -37,6 +37,7 @@ class SimulationWorkflow:
         graph = StateGraph(SimulationState)
         graph.add_node('initialize', self.initialize)
         graph.add_node('tick', self.tick)
+        graph.add_node('wait_step', self.wait_step)
         from .simulation_management import prepare_change,review_change
         graph.add_node('prepare_change', lambda state: prepare_change(self,state))
         graph.add_node('review_change', lambda state: review_change(self,state))
@@ -50,7 +51,8 @@ class SimulationWorkflow:
         graph.add_edge('prepare_change','review_change')
         graph.add_conditional_edges('review_change',self.route)
         graph.add_edge(START, 'initialize')
-        graph.add_edge('initialize', 'tick')
+        graph.add_conditional_edges('initialize', lambda s: 'wait_step' if self.load(s['run_id'])[1].step_mode else 'tick')
+        graph.add_edge('wait_step', 'tick')
         graph.add_conditional_edges('tick', self.route)
         self.graph = graph.compile(checkpointer=saver)
 
@@ -60,7 +62,11 @@ class SimulationWorkflow:
             return 'prepare_change'
         if all(p['accepted_day'] is not None for p in state['snapshot']['tasks'].values()):
             return 'prepare_closure' if scenario.final_acceptance else END
-        return 'tick'
+        return 'wait_step' if scenario.step_mode else 'tick'
+
+    def wait_step(self, state):
+        interrupt({'kind': 'next_simulation_day', 'day': state['snapshot']['day']})
+        return {}
 
     @staticmethod
     def config(run_id, limit):
@@ -146,7 +152,8 @@ class SimulationWorkflow:
             final=self.graph.get_state(config)
             paused=bool(final.next)
             if paused:
-                status='waiting_acceptance' if final.values.get('closure_approval_id') else 'waiting_change'
+                status=('waiting_step' if 'wait_step' in final.next else
+                    'waiting_acceptance' if final.values.get('closure_approval_id') else 'waiting_change')
             elif final.values.get('closure_result'):
                 status='completed' if final.values['closure_result']=='approve' else 'acceptance_rejected'
             else:

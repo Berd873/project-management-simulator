@@ -123,11 +123,12 @@ def test_upgrade_existing_m1_preserves_data(tmp_path):
     url = f'sqlite:///{(tmp_path / "old.db").as_posix()}'
     engine = build_engine(url)
     Base.metadata.create_all(engine, tables=[Base.metadata.tables[n] for n in ['projects','tasks','artifacts']])
-    with Session(engine) as s:
-        project = Project(name='Existing LMS', description='Preserve me')
-        s.add(project)
-        s.commit()
-        project_id = project.id
+    with engine.begin() as connection:
+        connection.execute(text('ALTER TABLE projects DROP COLUMN step_mode'))
+    project_id = '00000000-0000-0000-0000-000000000001'
+    with engine.begin() as connection:
+        connection.execute(text('INSERT INTO projects (id,name,description,sponsor_mode,llm_mode,execution_mode,status,phase,seed,simulation_day,created_at) VALUES (:id,:name,:description,:sponsor_mode,:llm_mode,:execution_mode,:status,:phase,:seed,:simulation_day,:created_at)'),
+            {'id':project_id,'name':'Existing LMS','description':'Preserve me','sponsor_mode':'llm','llm_mode':'mock','execution_mode':'simulation','status':'draft','phase':'initiating','seed':42,'simulation_day':0,'created_at':'2026-01-01 00:00:00'})
     engine.dispose()
     with TestClient(create_app(url)) as c:
         assert c.get(f'/api/v1/projects/{project_id}').json()['name'] == 'Existing LMS'

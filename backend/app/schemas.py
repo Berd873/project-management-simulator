@@ -13,6 +13,7 @@ class ProjectCreate(BaseModel):
     sponsor_mode: SponsorMode = SponsorMode.LLM
     llm_mode: LLMMode = LLMMode.MOCK
     execution_mode: Literal["simulation"] = "simulation"
+    step_mode: bool = False
     seed: int = Field(default=42, ge=0, le=2147483647, strict=True)
 
 

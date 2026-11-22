@@ -34,7 +34,7 @@ def test_no_key_full_automatic_library_delivery_and_restart(tmp_path,monkeypatch
         assert len(estimates['payload']['tasks'])==4
         assert next(a for a in artifacts if a['kind']=='change_spec')['payload']['added_tasks'][0]['acceptance_criteria']
         traces=c.get(f'/api/v1/runs/{run}/traces').json()
-        assert all(t['prompt_version']=='mock-decisions-v6' for t in traces)
+        assert all(t['prompt_version']=='mock-decisions-v7' for t in traces)
         assert len([t for t in traces if t['node'].endswith(':dispatch')])==9
         assert '关键任务' in report['report']['performance_analysis']['assessment']
         assert any('成本' in risk for risk in report['report']['performance_analysis']['risks'])
@@ -110,3 +110,33 @@ def test_incomplete_agent_estimates_fail_before_baseline(tmp_path):
         traces=c.get(f'/api/v1/runs/{run}/traces').json()
         failed=[t for t in traces if t['node'].endswith(':estimate_plan')]
         assert len(failed)==3 and all(not t['valid'] for t in failed)
+
+
+def test_step_mode_advances_one_day_and_booking_change_matches_scope(tmp_path):
+    url=f'sqlite:///{(tmp_path/"step-booking.db").as_posix()}'
+    with TestClient(create_app(url)) as c:
+        created=c.post('/api/v1/projects',json={
+            'name':'Campus Lab Booking','description':'Campus laboratory booking and availability checks',
+            'llm_mode':'mock','sponsor_mode':'llm','step_mode':True,'seed':42})
+        assert created.status_code==201,created.text
+        project_id=created.json()['id']
+        run=c.post(f'/api/v1/projects/{project_id}/delivery',headers={'Idempotency-Key':'step-demo'}).json()['run_id']
+        status_path=f'/api/v1/runs/{run}/delivery'
+        simulation_path=f'/api/v1/runs/{run}/simulation'
+        assert c.get(status_path).json()['status']=='waiting_step'
+        assert c.get(simulation_path).json()['snapshot']['day']==0
+        assert c.post(status_path+'/resume').status_code==202
+        assert c.get(status_path).json()['status']=='waiting_step'
+        assert c.get(simulation_path).json()['snapshot']['day']==1
+        for _ in range(20):
+            if c.get(status_path).json()['status']=='completed':
+                break
+            assert c.post(status_path+'/resume').status_code==202
+        assert c.get(status_path).json()['status']=='completed'
+        artifacts=c.get(f'/api/v1/runs/{run}/artifacts').json()
+        tasks=next(a for a in artifacts if a['kind']=='requirements_analyst')['payload']['tasks']
+        assert tasks[0]['title']=='Room catalog'
+        changes=c.get(f'/api/v1/runs/{run}/changes').json()
+        assert len(changes)==1 and 'booking' in changes[0]['reason'].lower()
+        report=c.get(simulation_path+'/report').json()
+        assert report['accepted'] and any('Booking cancellation' in t['title'] for t in report['report']['scope_acceptance'])

@@ -16,6 +16,8 @@ class Scenario(ValueObject):
     change_trigger_day: int | None = Field(default=None, ge=1)
     formal_management: bool = False
     final_acceptance: bool = False
+    step_mode: bool = False
+    change_description: str = 'Add overdue reminders'
 
 
 def initial_snapshot(plan: Plan, seed: int) -> dict:
@@ -117,7 +119,7 @@ def step(plan: Plan, previous: dict, scenario: Scenario, authorized_ids: list[st
                 emit('simulated_test_passed', task_id=key, attempt=progress['attempts'])
     if scenario.change_trigger_day is not None and current['day'] >= scenario.change_trigger_day and not current['change_triggered']:
         current['change_triggered'] = True
-        emit('change_requested', description='Add overdue reminders', status='proposal_only')
+        emit('change_requested', description=scenario.change_description, status='proposal_only')
     current['rng_state'] = rng.getstate()
     accepted = {key for key, p in current['tasks'].items() if p['accepted_day'] is not None}
     metrics = evm(plan, current['day'], accepted, {k: p['actual_cost_cents'] for k, p in current['tasks'].items()})

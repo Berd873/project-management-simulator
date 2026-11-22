@@ -29,6 +29,7 @@ class Project(Base):
     sponsor_mode: Mapped[SponsorMode] = mapped_column(enum_type(SponsorMode), default=SponsorMode.LLM)
     llm_mode: Mapped[LLMMode] = mapped_column(enum_type(LLMMode), default=LLMMode.MOCK)
     execution_mode: Mapped[str] = mapped_column(String(20), default="simulation")
+    step_mode: Mapped[bool] = mapped_column(default=False, server_default="0")
     status: Mapped[ProjectStatus] = mapped_column(enum_type(ProjectStatus), default=ProjectStatus.DRAFT)
     phase: Mapped[Phase] = mapped_column(enum_type(Phase), default=Phase.INITIATING)
     seed: Mapped[int] = mapped_column(Integer, default=42)

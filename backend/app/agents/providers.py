@@ -13,8 +13,8 @@ class Provider(Protocol):
 
 
 class MockProvider:
-    name = "mock:v6"
-    prompt_version = 'mock-decisions-v6'
+    name = "mock:v7"
+    prompt_version = 'mock-decisions-v7'
 
     def approve(self, target, charter):
         evidence = 'final simulated acceptance' if 'final_metrics' in charter else 'reviewed proposal'
@@ -43,15 +43,21 @@ class MockProvider:
                 durations={'1':2,'2':1,'3':2,'4':1}
                 return {'role':context.role.value,'rationale':'Estimate effort and resource rates; Python computes costs',
                     'payload':{'resources':[{'id':'developer','capacity':1,'rate_cents_per_day':5000}],
-                    'tasks':[{'task_id':task['id'],'duration_days':durations.get(task['id'],2),'resource_id':'developer'} for task in context.facts['wbs']['tasks']],
+                    'tasks':[{'task_id':task['id'],'duration_days':durations.get(task['id'],4),'resource_id':'developer'} for task in context.facts['wbs']['tasks']],
                     'assumptions':['One full-time developer; one work unit per day; CNY integer cents']}}
             if context.operation=='propose_change':
                 plan=context.facts['current_plan']
                 has_successor={edge['predecessor'] for edge in plan['dependencies']}
+                requested=context.facts['requested_change']
+                title=('Booking cancellation notifications' if 'booking' in requested.lower() else
+                    'Overdue reminders' if 'overdue' in requested.lower() else 'Acceptance review checklist')
+                criterion=('A cancelled booking produces a simulated notification' if 'booking' in requested.lower() else
+                    'Simulated overdue reader receives a reminder' if 'overdue' in requested.lower() else
+                    'The agreed requirements have a recorded review result')
                 return {'role':context.role.value,'rationale':'Propose a scoped response to the requested enhancement',
-                    'payload':{'reason':'Add overdue reminders requested during monitoring',
-                    'added_tasks':[{'id':'change.overdue_reminders','title':'Overdue reminders','duration_days':2,
-                    'resource_id':plan['resources'][0]['id'],'acceptance_criteria':['Simulated overdue reader receives a reminder'],
+                    'payload':{'reason':requested,
+                    'added_tasks':[{'id':'change.requested','title':title,'duration_days':2,
+                    'resource_id':plan['resources'][0]['id'],'acceptance_criteria':[criterion],
                     'predecessor_ids':[task['id'] for task in plan['tasks'] if task['id'] not in has_successor]}]}}
             operations = {
                 'dispatch':{'task_ids':context.facts.get('suggested_task_ids',[]),'summary':'Assign eligible simulated work within available resource capacity'},
@@ -80,6 +86,18 @@ class MockProvider:
                 {'id':'2','title':'Reader management','acceptance_criteria':['Reader records can be maintained'],'predecessor_ids':[]},
                 {'id':'3','title':'Borrowing and returns','acceptance_criteria':['Borrowed items can be returned'],'predecessor_ids':['1','2']},
                 {'id':'4','title':'Catalog search','acceptance_criteria':['Catalog items can be located'],'predecessor_ids':['1']}]}
+        elif context.role==Role.REQUIREMENTS_ANALYST and any(word in context.brief.lower() for word in ['booking','预约']):
+            payloads[context.role]={'in_scope':['Room catalog','Booking requests','Availability checks','Booking history'],
+                'out_scope':['Real source code execution'], 'tasks':[
+                {'id':'1','title':'Room catalog','acceptance_criteria':['Available rooms can be listed'],'predecessor_ids':[]},
+                {'id':'2','title':'Booking requests','acceptance_criteria':['A booking request can be submitted'],'predecessor_ids':[]},
+                {'id':'3','title':'Availability checks','acceptance_criteria':['Conflicting bookings are rejected'],'predecessor_ids':['1','2']},
+                {'id':'4','title':'Booking history','acceptance_criteria':['A user can view booking history'],'predecessor_ids':['2']}]}
+        elif context.role==Role.REQUIREMENTS_ANALYST:
+            payloads[context.role]={'in_scope':[context.brief],'out_scope':['Real source code execution'],
+                'tasks':[{'id':'1.1','title':'Deliver agreed requirements',
+                    'acceptance_criteria':['The initial requirement brief is reviewed in the simulated acceptance'],
+                    'predecessor_ids':[]}]}
         return {"role": context.role.value, "rationale": "Versioned deterministic mock decision", "payload": payloads[context.role]}
 
 
@@ -93,6 +111,12 @@ class RealProvider:
         self.timeout = float(os.getenv('LLM_TIMEOUT_SECONDS', '30'))
         if not 0 < self.timeout <= 120:
             raise ValueError('LLM_TIMEOUT_SECONDS must be between zero and 120')
+        # Reasoning models bill their hidden reasoning against max_tokens, so a
+        # 2048 cap truncates the JSON envelope. The default stays bounded; a
+        # local .env can raise it when the endpoint is a reasoning model.
+        self.max_tokens = int(os.getenv('LLM_MAX_TOKENS', '2048'))
+        if not 0 < self.max_tokens <= 16384:
+            raise ValueError('LLM_MAX_TOKENS must be between zero and 16384')
         if not self.model or not self.key:
             raise ValueError("LLM_MODEL and LLM_API_KEY are required")
         self.name = f"real:{self.model}"
@@ -111,8 +135,8 @@ class RealProvider:
     def request(self, schema, content):
         with httpx.Client(timeout=self.timeout) as client:
             response = client.post(self.base + '/chat/completions', headers={"Authorization": f"Bearer {self.key}"}, json={
-                "model": self.model, "response_format": {"type": "json_object"}, "max_tokens": 2048,
-                "messages": [{"role": "system", "content": "Act only as the specified project role. Return exactly one JSON object matching this JSON Schema. Do not wrap it in schema, envelope, or result keys. " + json.dumps(schema)},
+                "model": self.model, "response_format": {"type": "json_object"}, "max_tokens": self.max_tokens,
+                "messages": [{"role": "system", "content": "Act only as the specified project role. Return exactly one JSON object matching this JSON Schema. Do not wrap it in schema, envelope, or result keys. evidence_refs may only repeat ids that already appear as values of artifact_refs in the input; when no such id applies return an empty array. Never invent identifiers. " + json.dumps(schema)},
                              {"role": "user", "content": content}],
             })
             response.raise_for_status()

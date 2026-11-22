@@ -38,7 +38,7 @@ class DeliveryWorkflow:
         graph.add_edge('build_plan','approve_plan')
         graph.add_conditional_edges('approve_plan',lambda s:'execute' if s['phase']=='plan_approved' else ('wait_plan' if s['phase']=='waiting_approval' else END))
         graph.add_edge('wait_plan','approve_plan')
-        graph.add_conditional_edges('execute',lambda s:'wait_execution' if s['phase'] in ['waiting_change','waiting_acceptance'] else END)
+        graph.add_conditional_edges('execute',lambda s:'wait_execution' if s['phase'] in ['waiting_change','waiting_acceptance','waiting_step'] else END)
         graph.add_edge('wait_execution','execute')
         self.graph=graph.compile(checkpointer=saver)
 
@@ -102,8 +102,12 @@ class DeliveryWorkflow:
                 plan=Plan.model_validate(artifact.payload)
                 run=session.get(Run,state['run_id'])
                 ids={task.id for task in plan.tasks}
-                scenario=Scenario(version='generated-v1',forced_first_test_failures=['3' if '3' in ids else sorted(ids)[0]],
-                    change_trigger_day=3,formal_management=True,final_acceptance=True)
+                project=session.get(Project,run.project_id)
+                scenario=Scenario(version='generated-v2',forced_first_test_failures=['3' if '3' in ids else sorted(ids)[0]],
+                    change_trigger_day=3,formal_management=True,final_acceptance=True,step_mode=project.step_mode,
+                    change_description=('Add booking cancellation notifications' if any(word in project.description.lower() for word in ['booking','预约'])
+                        else 'Add overdue reminders' if any(word in project.description.lower() for word in ['library','图书'])
+                        else 'Add an acceptance review checklist'))
                 session.add(SimulationRun(run_id=run.id,plan=plan.model_dump(mode='json'),scenario=scenario.model_dump(mode='json'),
                     seed=session.get(Project,run.project_id).seed,schedule=json_value(cpm(plan))))
         self.runtime.simulation.drive(state['run_id'])

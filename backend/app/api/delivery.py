@@ -42,7 +42,8 @@ def delivery_router(runtime):
             state=runtime.delivery.graph.get_state(runtime.delivery.config(run_id))
             paused=any(task.interrupts for task in state.tasks)
             failed=bool(run.error) or any(task.error for task in state.tasks)
-            result='failed' if failed else ('waiting_approval' if paused else ('running' if state.next else state.values.get('phase','ready')))
+            result='failed' if failed else (('waiting_step' if state.values.get('phase')=='waiting_step' else 'waiting_approval') if paused
+                else ('running' if state.next else state.values.get('phase','ready')))
             pending=session.scalars(select(Approval).where(Approval.run_id==run_id,Approval.status.in_(['pending','failed']))).all()
             return {'run_id':run_id,'project_id':run.project_id,'status':result,'phase':state.values.get('phase','initiating'),'error':run.error,
                     'execution_mode':'simulation','pending_approvals':[{'id':a.id,'target_id':a.target_id,'target_version':a.target_version,

@@ -1,4 +1,4 @@
-export type Project = { id: string; name: string; description: string; sponsor_mode: string; llm_mode: string; seed: number; status: string; phase: string }
+export type Project = { id: string; name: string; description: string; sponsor_mode: string; llm_mode: string; step_mode: boolean; seed: number; status: string; phase: string }
 export type Pending = { id: string; target_id: string; target_version: number; kind: string; status: string }
 export type Delivery = { run_id: string; project_id: string; status: string; phase: string; error: string | null; pending_approvals: Pending[] }
 export type Task = { id: string; title: string; duration_days: number; budget_cents: number; resource_id: string }

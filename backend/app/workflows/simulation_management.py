@@ -2,7 +2,7 @@ from copy import deepcopy
 from langgraph.types import interrupt
 from sqlalchemy import func,select
 from ..domain import Role
-from ..models import Approval,Artifact,Baseline,NodeReceipt,Project,Run
+from ..models import Approval,Artifact,Baseline,NodeReceipt,Project,Run,SimulationRun
 from ..services.baselines import BaselineConflict,active_baseline,propose_change,execution_transition
 from ..services.planning import Plan
 from ..services.rebaseline import metrics,transition
@@ -18,9 +18,10 @@ def prepare_change(workflow,state):
     with runtime.sessions() as session:
         source=session.get(Baseline,snapshot['baseline_id'])
         old=Plan.model_validate(source.content['plan'])
+        requested_change=session.get(SimulationRun,state['run_id']).scenario['change_description']
     from .execution_agents import call_role
     recommendation=call_role(runtime,state['run_id'],snapshot['day'],Role.PROJECT_MANAGER,'propose_change',
-        {'requested_change':'Add overdue reminders','current_plan':old.model_dump(mode='json'),
+        {'requested_change':requested_change,'current_plan':old.model_dump(mode='json'),
          'task_progress':snapshot['tasks'],'metrics':metrics(old,snapshot)})
     candidate=old.model_dump(mode='json')
     candidate['version']+=1

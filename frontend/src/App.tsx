@@ -2,15 +2,17 @@ import { useEffect, useRef, useState } from 'react'
 import { api, money, post, ratio, terminal } from './api'
 import type { Artifact, Baseline, Change, Metric, Pending, Plan, Project, Report, RunData, Trace } from './api'
 import { useEvents, useRun } from './hooks'
+import ExperimentReport from './ExperimentReport'
 
 const roles = [
   ['sponsor', '发起人', 'SP', '需求与审批'], ['project_manager', '项目经理', 'PM', '协调与管理'],
   ['requirements_analyst', '需求分析师', 'RA', '范围与 WBS'], ['developer', '开发工程师', 'DE', '模拟开发与修复'],
   ['tester', '测试工程师', 'QA', '模拟测试与回归'], ['progress_cost_analyst', '绩效分析师', 'PC', '进度与成本'],
 ] as const
-const labels: Record<string, string> = { completed: '已完成验收', waiting_approval: '等待发起人审批', running: '协作进行中', ready: '准备中', failed: '执行中断', rejected: '提案被拒绝', acceptance_rejected: '最终验收未通过', waiting_change: '变更待审批', waiting_acceptance: '等待最终验收', initiating: '项目启动', awaiting_m3: '角色提案就绪', plan_approved: '计划已批准', approve: '批准', reject: '拒绝', applied: '已应用', proposed: '已提出', pending: '待审批' }
+const labels: Record<string, string> = { completed: '已完成验收', waiting_step: '等待推进下一工作日', waiting_approval: '等待发起人审批', running: '协作进行中', ready: '准备中', failed: '执行中断', rejected: '提案被拒绝', acceptance_rejected: '最终验收未通过', waiting_change: '变更待审批', waiting_acceptance: '等待最终验收', initiating: '项目启动', awaiting_m3: '角色提案就绪', plan_approved: '计划已批准', approve: '批准', reject: '拒绝', applied: '已应用', proposed: '已提出', pending: '待审批' }
 const names: Record<string, string> = { project_manager: '项目章程', plan: '计划与变更', closure_candidate: '最终验收', requirements_analyst: '需求规格与 WBS', planning_estimates: '资源估算', change_spec: '变更范围说明', sponsor: '需求简述', project_report: '结项报告' }
 const defaultDescription = 'Library catalog management, reader management, borrowing, returns and search.'
+const bookingDescription = 'Campus laboratory booking, room catalog, availability checks and booking history.'
 type View = 'overview' | 'plan' | 'agents' | 'changes' | 'report'
 const views: [View, string, string][] = [['overview', '实验总览', '◈'], ['plan', '范围与计划', '▥'], ['agents', '协作与轨迹', '◎'], ['changes', '变更与审批', '⇄'], ['report', '结项报告', '▤']]
 const saveJson = (filename: string, value: unknown) => { const url = URL.createObjectURL(new Blob([JSON.stringify(value, null, 2)], { type: 'application/json' })); const a = document.createElement('a'); a.href = url; a.download = filename; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000) }
@@ -21,9 +23,11 @@ export default function App() {
   const [view, setView] = useState<View>('overview'), [revision, setRevision] = useState(0), [busy, setBusy] = useState(false)
   const [actionError, setActionError] = useState(''), [day, setDay] = useState<number | null>(null), [role, setRole] = useState('')
   const [allEvents, setAllEvents] = useState(false)
+  const [playing, setPlaying] = useState(false), [replayPending, setReplayPending] = useState(false), [reportOpen, setReportOpen] = useState(false)
+  const lastRequestedDay = useRef(-1)
   const dialog = useRef<HTMLDialogElement>(null)
   const [name, setName] = useState('Library Management System'), [description, setDescription] = useState(defaultDescription)
-  const [sponsor, setSponsor] = useState('llm'), [model, setModel] = useState('mock'), [seed, setSeed] = useState(42)
+  const [sponsor, setSponsor] = useState('llm'), [model, setModel] = useState('mock'), [seed, setSeed] = useState(42), [stepMode, setStepMode] = useState(true)
   const { data, error } = useRun(run, revision)
   const done = !!data && terminal(data.delivery.status)
   const { events, connected } = useEvents(run, done)
@@ -31,21 +35,21 @@ export default function App() {
   async function refreshProjects() { const list = await api<Project[]>('/projects?limit=100'); setProjects(list); return list }
   useEffect(() => { void refreshProjects().catch(e => setActionError(String(e.message))) }, [])
   useEffect(() => { if (data) { const p = projects.find(p => p.id === data.delivery.project_id); if (p) setProject(p) } }, [data, projects])
-  useEffect(() => { if (run) { localStorage.setItem('pm-run', run); const url = new URL(location.href); url.searchParams.set('run', run); history.replaceState(null, '', url) }; setDay(null) }, [run])
+  useEffect(() => { if (run) { localStorage.setItem('pm-run', run); const url = new URL(location.href); url.searchParams.set('run', run); history.replaceState(null, '', url) }; setDay(null); setPlaying(false); lastRequestedDay.current = -1 }, [run])
 
   async function start(quick = false) {
     if (busy) return
     setBusy(true); setActionError('')
     try {
-      const created = await post<Project>('/projects', { name: quick ? 'Library Management System' : name, description: quick ? defaultDescription : description, sponsor_mode: quick ? 'llm' : sponsor, llm_mode: quick ? 'mock' : model, seed: quick ? 42 : seed })
+      const created = await post<Project>('/projects', { name: quick ? 'Library Management System' : name, description: quick ? defaultDescription : description, sponsor_mode: quick ? 'llm' : sponsor, llm_mode: quick ? 'mock' : model, step_mode: quick ? false : stepMode, seed: quick ? 42 : seed })
       setProject(created); await refreshProjects()
       const delivery = await post<{ run_id: string }>(`/projects/${created.id}/delivery`, undefined, crypto.randomUUID())
-      setRun(delivery.run_id); setView('overview'); setRevision(n => n + 1); dialog.current?.close()
+      setRun(delivery.run_id); setReplayPending(quick); setView('overview'); setRevision(n => n + 1); dialog.current?.close()
     } catch (e) { setActionError(e instanceof Error ? e.message : '启动失败；可从项目列表恢复') } finally { setBusy(false) }
   }
   async function openProject(id: string) {
     const selected = projects.find(p => p.id === id); if (!selected) return
-    setProject(selected); setActionError('')
+    setProject(selected); setActionError(''); setPlaying(false); setReplayPending(false)
     try { const rows = await api<{ id: string; delivery: boolean }[]>(`/projects/${id}/runs`); const delivery = rows.find(row => row.delivery); if (delivery) { setRun(delivery.id); setRevision(n => n + 1) } else { setRun(''); setActionError('该项目尚无自动交付记录，请新建实验或使用 API 启动。') } } catch (e) { setActionError((e as Error).message) }
   }
   async function approve(a: Pending, decision: string, reason: string) {
@@ -58,15 +62,46 @@ export default function App() {
   }
   async function resume() { setBusy(true); try { await post(`/runs/${run}/delivery/resume`); setRevision(n => n + 1); setActionError('') } catch (e) { setActionError((e as Error).message) } finally { setBusy(false) } }
 
+  async function advanceDay() {
+    if (busy || !data || data.delivery.status !== 'waiting_step') return
+    const current = data.simulation?.snapshot?.day ?? 0
+    if (lastRequestedDay.current === current) return
+    lastRequestedDay.current = current
+    setBusy(true)
+    try { await post(`/runs/${run}/delivery/resume`); setActionError('') }
+    catch (e) { lastRequestedDay.current = -1; setPlaying(false); setActionError((e as Error).message) }
+    finally { setBusy(false) }
+  }
+
   const simulation = data?.simulation, latestDay = simulation?.snapshot?.day || 0, currentDay = day ?? latestDay
   const metric = simulation?.metrics.find(m => m.status_day === currentDay)
   const baseline = data?.baselines.find(b => b.version === metric?.baseline_version) || data?.baselines.at(-1)
   const plan = baseline?.content.plan || simulation?.current_plan
   const status = data?.delivery.status || (run ? 'ready' : '')
   const pending = data?.delivery.pending_approvals.filter(a => a.status === 'pending') || []
-  const group = ['completed', 'acceptance_rejected'].includes(status) || simulation?.status === 'waiting_acceptance' ? 4 : simulation ? 3 : (data?.artifacts.some(a => a.kind === 'requirements_analyst') ? 1 : 0)
+  const group = currentDay === 0 && simulation ? 1 : currentDay < latestDay ? 3 :
+    ['completed', 'acceptance_rejected'].includes(status) || simulation?.status === 'waiting_acceptance' ? 4 :
+    simulation ? 3 : (data?.artifacts.some(a => a.kind === 'requirements_analyst') ? 1 : 0)
   const acceptedCount = plan?.tasks.filter(t => { const accepted = simulation?.snapshot?.tasks[t.id]?.accepted_day; return accepted != null && accepted <= currentDay }).length || 0
   const analysis = data?.traces.find(t => t.valid && t.node === `execution:${currentDay}:progress_cost_analyst:monitor`)?.output.payload
+
+  useEffect(() => {
+    if (replayPending && done && latestDay > 0) { setDay(0); setPlaying(true); setReplayPending(false) }
+  }, [replayPending, done, latestDay])
+  useEffect(() => {
+    if (!playing || !run) return
+    if (day !== null && day < latestDay) {
+      const timer = setTimeout(() => setDay(value => Math.min((value ?? 0) + 1, latestDay)), 1300)
+      return () => clearTimeout(timer)
+    }
+    if (status === 'waiting_step' && lastRequestedDay.current !== latestDay) {
+      const timer = setTimeout(() => void advanceDay(), 1300)
+      return () => clearTimeout(timer)
+    }
+    if (done && currentDay >= latestDay) setPlaying(false)
+  }, [playing, run, day, latestDay, status, done, currentDay])
+
+  if (reportOpen && data && project) return <ExperimentReport data={data} project={project} run={run} onClose={() => setReportOpen(false)}/>
 
   return <div className="app-shell">
     <aside className="sidebar">
@@ -84,27 +119,34 @@ export default function App() {
         {!run ? <section className="hero panel"><div><span className="badge outline">内置教学项目 / LMS</span><h2>一次项目，六种视角。</h2><p>图书管理系统示例包含需求分解、资源约束、缺陷返工，以及一次正式需求变更。无需 API Key，即可启动可复现的协作实验。</p><button className="button dark large" disabled={busy} onClick={() => void start(true)}>{busy ? '正在创建实验…' : '运行 Mock 示例 →'}</button><div className="hero-foot">五大过程组 <span>·</span> 六个协作角色 <span>·</span> 全程可追踪</div></div><div className="collab-visual" aria-hidden="true"><div className="orbit"/><div className="hub">共享项目状态<small>CONTROLLED WORKFLOW</small></div>{roles.map((r, i) => <div className={`orbit-role orbit-${i}`} key={r[0]}><strong>{r[2]}</strong><span>{r[1]}</span></div>)}</div></section> : <>
           <section className="process-strip" aria-label="五大过程组">{['启动', '规划', '执行', '监控与控制', '收尾'].map((name, i) => <div key={name} className={i <= group ? 'reached' : ''}><span>{String(i + 1).padStart(2, '0')}</span><b>{name}</b><small>{i < group || status === 'completed' ? '已推进' : i === group ? '当前阶段' : '待推进'}</small></div>)}</section>
           {pending.length > 0 && <section className="approval-section"><div className="section-heading"><h2>需要你的管理决策</h2><span>审批绑定具体产物与版本</span></div>{pending.map(a => <ApprovalCard key={a.id} approval={a} artifact={data?.artifacts.find(x => x.id === a.target_id)} changes={data?.changes || []} busy={busy} onDecide={(d, reason) => void approve(a, d, reason)} />)}</section>}
-          {(view === 'overview' || view === 'plan') && <div className="day-control"><span><b>第 {currentDay} 个模拟工作日</b> / {latestDay}<small>{day === null ? '实时视图' : '历史指标回放'}</small></span><input aria-label="查看模拟日" type="range" min="0" max={Math.max(latestDay, 1)} value={currentDay} disabled={!latestDay} onChange={e => setDay(Number(e.target.value))}/><button className="text-button" onClick={() => setDay(null)}>回到最新</button></div>}
+          {(view === 'overview' || view === 'plan') && <><div className="day-control"><span><b>第 {currentDay} 个模拟工作日</b> / {latestDay}<small>{day === null ? '当前进度' : '历史回放'}</small></span><div className="day-actions"><button className="button light" aria-label="上一工作日" title="上一工作日" disabled={currentDay === 0} onClick={() => { setPlaying(false); setDay(currentDay - 1) }}>←</button><button className="button light" aria-label={playing ? '暂停播放' : '播放模拟'} title={playing ? '暂停播放' : '播放模拟'} onClick={() => { if (done && currentDay >= latestDay) setDay(0); else if (day === null) setDay(currentDay); setPlaying(!playing) }}>{playing ? 'Ⅱ' : '▶'}</button><button className="button light" aria-label="下一工作日" title="下一工作日" disabled={busy || (currentDay >= latestDay && status !== 'waiting_step')} onClick={() => { setPlaying(false); if (currentDay < latestDay) setDay(currentDay + 1); else void advanceDay() }}>→</button></div><input aria-label="查看模拟日" type="range" min="0" max={Math.max(latestDay, 1)} value={currentDay} disabled={!latestDay} onChange={e => { setPlaying(false); setDay(Number(e.target.value)) }}/><button className="text-button" onClick={() => { setPlaying(false); setDay(null) }}>回到最新</button></div><DayActivity day={currentDay} data={data}/></>}
           {view === 'overview' && <>
             <MetricCards metric={metric}/>
             <section className="role-grid">{roles.map(r => <button className="role-card" key={r[0]} onClick={() => { setRole(r[0]); setView('agents') }}><span className={`avatar role-${r[0]}`}>{r[2]}</span><strong>{r[1]}</strong><small>{r[3]}</small><b>{data?.traces.filter(t => t.role === r[0]).length || 0}<em> 次决策</em></b></button>)}</section>
-            <div className="overview-grid"><section className="panel"><div className="section-heading"><div><div className="eyebrow">EARNED VALUE MANAGEMENT</div><h2>价值与成本走势</h2></div><span>单位：人民币</span></div><CostChart metrics={simulation?.metrics || []} day={currentDay}/></section><section className="panel summary-panel"><div className="eyebrow">PROJECT SNAPSHOT</div><h2>当前管理快照</h2><dl><dt>当前基准</dt><dd>{baseline ? `V${baseline.version}` : '尚未批准'}</dd><dt>范围验收进度</dt><dd>{acceptedCount} / {plan?.tasks.length || 0} 项</dd><dt>已获批变更</dt><dd>{data?.changes.filter(c => c.status === 'applied').length || 0} 次</dd><dt>CPM 计划工期</dt><dd>{baseline?.content.schedule.duration_days ?? '—'} 个工作日</dd><dt>当前模拟日</dt><dd>{latestDay} 日</dd><dt>事件记录</dt><dd>{events.length} 条</dd></dl><progress className="scope-progress" aria-label="模拟任务验收进度" value={acceptedCount} max={Math.max(plan?.tasks.length || 0, 1)}/><p className="footnote">CPM 不考虑资源等待。模拟工期还受到资源容量、缺陷与返工影响。</p><button className="button light" onClick={() => setView('plan')}>查看 WBS 与甘特图 ↗</button></section></div>
+            <div className="overview-grid"><section className="panel"><div className="section-heading"><div><div className="eyebrow">EARNED VALUE MANAGEMENT</div><h2>价值与成本走势</h2></div><span>单位：人民币</span></div><CostChart metrics={simulation?.metrics || []} day={currentDay}/></section><section className="panel summary-panel"><div className="eyebrow">PROJECT SNAPSHOT</div><h2>当前管理快照</h2><dl><dt>当前基准</dt><dd>{baseline ? `V${baseline.version}` : '尚未批准'}</dd><dt>范围验收进度</dt><dd>{acceptedCount} / {plan?.tasks.length || 0} 项</dd><dt>已获批变更</dt><dd>{data?.changes.filter(c => c.status === 'applied' && data.baselines.some(b => b.id === c.applied_baseline_id && b.version <= (baseline?.version || 0))).length || 0} 次</dd><dt>CPM 计划工期</dt><dd>{baseline?.content.schedule.duration_days ?? '—'} 个工作日</dd><dt>当前模拟日</dt><dd>{currentDay} 日</dd><dt>事件记录</dt><dd>{events.length} 条</dd></dl><progress className="scope-progress" aria-label="模拟任务验收进度" value={acceptedCount} max={Math.max(plan?.tasks.length || 0, 1)}/><p className="footnote">CPM 不考虑资源等待。模拟工期还受到资源容量、缺陷与返工影响。</p><button className="button light" onClick={() => setView('plan')}>查看 WBS 与甘特图 ↗</button></section></div>
           </>}
           {view === 'overview' && analysis && <section className="panel performance-panel"><div className="section-heading"><h2>绩效分析师 · 关键路径与偏差解读</h2><span>基于当前模拟日的确定性计算</span></div><p>{String(analysis.assessment || '')}</p><ul>{Array.isArray(analysis.risks) && analysis.risks.map((risk, i) => <li key={i}>{String(risk)}</li>)}</ul></section>}
           {view === 'plan' && <><Gantt plan={plan} baseline={baseline} run={run}/><Scope artifacts={data?.artifacts || []}/></>}
           {view === 'agents' && <><div className="role-filters"><button className={!role ? 'selected' : ''} onClick={() => setRole('')}>全部角色</button>{roles.map(r => <button key={r[0]} className={role === r[0] ? 'selected' : ''} onClick={() => setRole(r[0])}>{r[1]}</button>)}</div><section className="panel"><div className="section-heading"><h2>结构化决策记录</h2><span>{data?.traces.length || 0} 次执行尝试</span></div><Traces traces={(data?.traces || []).filter(t => !role || t.role === role)}/></section></>}
           {view === 'changes' && <><Changes changes={data?.changes || []}/><section className="panel"><div className="section-heading"><h2>批准基准历史</h2><span>历史版本只读</span></div>{data?.baselines.length ? data.baselines.map(b => <div className="baseline-row" key={b.id}><span className="version">V{b.version}</span><div><strong>{b.version === 1 ? '初始计划基准' : '正式变更后的新基准'}</strong><small>第 {b.effective_day} 日生效 · {b.content.plan.tasks.length} 项任务 · BAC {money(b.content.plan.tasks.reduce((s, t) => s + t.budget_cents, 0))}</small></div><code title={b.content_hash}>{b.content_hash.slice(0, 12)}</code></div>) : <Empty text="尚无获批基准。"/>}</section></>}
-          {view === 'report' && <ReportView report={data?.report || null}/ >}
+          {view === 'report' && <><div className="report-export"><button className="button dark" disabled={!data?.report} onClick={() => setReportOpen(true)}>生成实验报告 ↗</button></div><ReportView report={data?.report || null}/></>}
           <section className="panel events-panel"><div className="section-heading"><h2>工作流事件</h2><div className="heading-actions"><span className="stream-status"><i className={connected ? 'online' : ''}/>{done ? '持久记录' : connected ? '实时连接' : '正在重连'}</span><button className="text-button" onClick={() => setAllEvents(!allEvents)}>{allEvents ? '仅看最近事件' : `查看全部 ${events.length} 条`}</button></div></div><div className="events-list">{events.length ? (allEvents ? events : events.slice(-12)).slice().reverse().map(e => <div key={e.id}><code>#{e.id.toString().padStart(3, '0')}</code><b>{eventLabel(e.kind)}</b><span>{eventSummary(e.data)}</span></div>) : <Empty text={data ? '等待工作流事件…' : '正在连接后端并读取项目…'}/>}</div></section>
         </>}
         <footer>软件项目管理教学实验 <span>所有开发成果与测试结论均为模拟结果</span></footer>
       </div>
     </main>
-    <dialog ref={dialog}><form onSubmit={e => { e.preventDefault(); void start() }}><div className="section-heading"><div><div className="eyebrow">NEW EXPERIMENT</div><h2>创建项目管理实验</h2></div><button type="button" className="close" aria-label="关闭" onClick={() => dialog.current?.close()}>×</button></div><label>项目名称<input required maxLength={200} value={name} onChange={e => setName(e.target.value)}/></label><label>初始需求<textarea required rows={4} value={description} onChange={e => setDescription(e.target.value)}/></label><div className="form-grid"><label>发起人模式<select value={sponsor} onChange={e => setSponsor(e.target.value)}><option value="llm">模拟发起人自动审批</option><option value="human">Human · 人工审批</option></select></label><label>角色决策模式<select value={model} onChange={e => setModel(e.target.value)}><option value="mock">Mock · 无需密钥</option><option value="real">真实模型 · 使用服务器配置</option></select></label></div><label>随机种子<input type="number" min={0} max={2147483647} required value={seed} onChange={e => setSeed(Number(e.target.value))}/></label><p className="footnote">系统会生成计划、推进模拟时间并保存决策轨迹。真实模型模式会调用服务器上配置的 API。</p>{actionError && <p className="alert" role="alert">{actionError}</p>}<button className="button dark large" disabled={busy}>{busy ? '正在启动…' : '启动模拟实验 →'}</button></form></dialog>
+    <dialog ref={dialog}><form onSubmit={e => { e.preventDefault(); void start() }}><div className="section-heading"><div><div className="eyebrow">NEW EXPERIMENT</div><h2>创建项目管理实验</h2></div><button type="button" className="close" aria-label="关闭" onClick={() => dialog.current?.close()}>×</button></div><label>Mock 场景<select aria-label="Mock 场景" onChange={e => { if (e.target.value === 'library') { setName('Library Management System'); setDescription(defaultDescription) } else if (e.target.value === 'booking') { setName('Campus Lab Booking'); setDescription(bookingDescription) } else { setName('Custom Project'); setDescription('Describe the agreed requirements here.') } }}><option value="library">图书管理系统</option><option value="booking">实验室预约系统</option><option value="custom">其他需求（通用演练）</option></select></label><label>项目名称<input required maxLength={200} value={name} onChange={e => setName(e.target.value)}/></label><label>初始需求<textarea required rows={4} value={description} onChange={e => setDescription(e.target.value)}/></label><div className="form-grid"><label>发起人模式<select value={sponsor} onChange={e => setSponsor(e.target.value)}><option value="llm">模拟发起人自动审批</option><option value="human">Human · 人工审批</option></select></label><label>角色决策模式<select value={model} onChange={e => setModel(e.target.value)}><option value="mock">Mock · 无需密钥</option><option value="real">真实模型 · 使用服务器配置</option></select></label></div><label className="check-setting"><input type="checkbox" checked={stepMode} onChange={e => setStepMode(e.target.checked)}/><span>逐日演示：每个模拟工作日后暂停</span></label><label>随机种子<input type="number" min={0} max={2147483647} required value={seed} onChange={e => setSeed(Number(e.target.value))}/></label><p className="footnote">Mock 对图书管理和实验室预约使用预设任务；其他需求采用单任务通用演练。真实模型模式会调用服务器上配置的 API。</p>{actionError && <p className="alert" role="alert">{actionError}</p>}<button className="button dark large" disabled={busy}>{busy ? '正在启动…' : '启动模拟实验 →'}</button></form></dialog>
   </div>
 }
 
 function Empty({ text }: { text: string }) { return <div className="empty">{text}</div> }
+function DayActivity({ day, data }: { day: number; data: RunData | null }) {
+  const tick = data?.simulation?.ticks.find(t => t.day === day)
+  const traces = (data?.traces || []).filter(t => day === 0 ? !t.node.startsWith('execution:') : t.node.startsWith(`execution:${day}:`))
+  const tasks = data?.baselines.at(-1)?.content.plan.tasks || []
+  const taskName = (id: string) => tasks.find(t => t.id === id)?.title || id
+  return <section className="day-activity" aria-label="当日模拟活动"><div className="section-heading"><h2>第 {day} 日活动</h2><span>{day === 0 ? '启动与计划' : `${tick?.assignments.length || 0} 项分配 · ${tick?.events.length || 0} 条执行事件 · ${traces.length} 次角色决策`}</span></div>{day === 0 ? <p>项目章程、需求和计划已形成；从下一工作日开始模拟执行。</p> : <><div className="activity-lines">{tick?.assignments.map(id => <span key={id}>执行任务：{taskName(id)}</span>)}{tick?.events.map((event, i) => <span key={i}>{eventLabel(String(event.kind))}{event.task_id ? ` · ${taskName(String(event.task_id))}` : event.description ? ` · ${String(event.description)}` : ''}</span>)}{!tick?.assignments.length && !tick?.events.length && <span>当日无任务执行，等待前置任务或资源。</span>}</div><div className="activity-roles">{traces.map((trace, i) => <span key={`${trace.node}:${i}`}>{roles.find(r => r[0] === trace.role)?.[1] || trace.role}：{trace.node.split(':').at(-1)}</span>)}</div></>}</section>
+}
 function MetricCards({ metric }: { metric?: Metric }) { return <section className="metric-grid" aria-label="挣值管理指标">{[['计划价值 PV', metric ? money(metric.pv_cents) : '—', '批准计划的累计价值'], ['挣值 EV', metric ? money(metric.ev_cents) : '—', '通过模拟验收的工作价值'], ['实际成本 AC', metric ? money(metric.ac_cents) : '—', '模拟消耗的累计成本'], ['进度绩效 SPI', ratio(metric?.spi), 'EV / PV'], ['成本绩效 CPI', ratio(metric?.cpi), 'EV / AC']].map(([title, value, hint]) => <article key={title}><span>{title}</span><strong>{value}</strong><small>{hint}</small></article>)}</section> }
 
 function CostChart({ metrics, day }: { metrics: Metric[]; day: number }) {
