@@ -6,8 +6,8 @@
   <Title>SIMULATION PLAN · Library Management System · Baseline V2</Title>
   <Subject>Teaching simulation; dependency-only approved task plan; not real execution results</Subject>
   <ScheduleFromStart>1</ScheduleFromStart>
-  <StartDate>2026-11-16T08:00:00</StartDate>
-  <FinishDate>2026-11-23T17:00:00</FinishDate>
+  <StartDate>2026-11-09T08:00:00</StartDate>
+  <FinishDate>2026-11-16T17:00:00</FinishDate>
   <CurrencyDigits>2</CurrencyDigits>
   <CurrencySymbol>¥</CurrencySymbol>
   <CurrencyCode>CNY</CurrencyCode>
@@ -111,7 +111,7 @@
   </Calendars>
   <Tasks>
     <Task>
-      <UID>1803989619</UID>
+      <UID>1</UID>
       <ID>1</ID>
       <Name>Catalog management</Name>
       <Type>1</Type>
@@ -119,8 +119,8 @@
       <WBS>1</WBS>
       <OutlineNumber>1</OutlineNumber>
       <OutlineLevel>1</OutlineLevel>
-      <Start>2026-11-16T08:00:00</Start>
-      <Finish>2026-11-17T17:00:00</Finish>
+      <Start>2026-11-09T08:00:00</Start>
+      <Finish>2026-11-10T17:00:00</Finish>
       <Duration>PT16H0M0S</Duration>
       <DurationFormat>7</DurationFormat>
       <Estimated>0</Estimated>
@@ -135,7 +135,7 @@
       <Notes>SIMULATION PLAN ONLY; baseline V2; resource=developer; budget exported as fixed cost; resource assignments and actual execution are not exported.</Notes>
     </Task>
     <Task>
-      <UID>1416846906</UID>
+      <UID>2</UID>
       <ID>2</ID>
       <Name>Reader management</Name>
       <Type>1</Type>
@@ -143,8 +143,8 @@
       <WBS>2</WBS>
       <OutlineNumber>2</OutlineNumber>
       <OutlineLevel>1</OutlineLevel>
-      <Start>2026-11-16T08:00:00</Start>
-      <Finish>2026-11-16T17:00:00</Finish>
+      <Start>2026-11-09T08:00:00</Start>
+      <Finish>2026-11-09T17:00:00</Finish>
       <Duration>PT8H0M0S</Duration>
       <DurationFormat>7</DurationFormat>
       <Estimated>0</Estimated>
@@ -159,7 +159,7 @@
       <Notes>SIMULATION PLAN ONLY; baseline V2; resource=developer; budget exported as fixed cost; resource assignments and actual execution are not exported.</Notes>
     </Task>
     <Task>
-      <UID>1309098117</UID>
+      <UID>3</UID>
       <ID>3</ID>
       <Name>Borrowing and returns</Name>
       <Type>1</Type>
@@ -167,8 +167,8 @@
       <WBS>3</WBS>
       <OutlineNumber>3</OutlineNumber>
       <OutlineLevel>1</OutlineLevel>
-      <Start>2026-11-18T08:00:00</Start>
-      <Finish>2026-11-19T17:00:00</Finish>
+      <Start>2026-11-11T08:00:00</Start>
+      <Finish>2026-11-12T17:00:00</Finish>
       <Duration>PT16H0M0S</Duration>
       <DurationFormat>7</DurationFormat>
       <Estimated>0</Estimated>
@@ -182,14 +182,14 @@
       <CalendarUID>1</CalendarUID>
       <Notes>SIMULATION PLAN ONLY; baseline V2; resource=developer; budget exported as fixed cost; resource assignments and actual execution are not exported.</Notes>
       <PredecessorLink>
-        <PredecessorUID>1803989619</PredecessorUID>
+        <PredecessorUID>1</PredecessorUID>
         <Type>1</Type>
         <CrossProject>0</CrossProject>
         <LinkLag>0</LinkLag>
         <LagFormat>7</LagFormat>
       </PredecessorLink>
       <PredecessorLink>
-        <PredecessorUID>1416846906</PredecessorUID>
+        <PredecessorUID>2</PredecessorUID>
         <Type>1</Type>
         <CrossProject>0</CrossProject>
         <LinkLag>0</LinkLag>
@@ -197,7 +197,7 @@
       </PredecessorLink>
     </Task>
     <Task>
-      <UID>1260550007</UID>
+      <UID>4</UID>
       <ID>4</ID>
       <Name>Catalog search</Name>
       <Type>1</Type>
@@ -205,8 +205,8 @@
       <WBS>4</WBS>
       <OutlineNumber>4</OutlineNumber>
       <OutlineLevel>1</OutlineLevel>
-      <Start>2026-11-18T08:00:00</Start>
-      <Finish>2026-11-18T17:00:00</Finish>
+      <Start>2026-11-11T08:00:00</Start>
+      <Finish>2026-11-11T17:00:00</Finish>
       <Duration>PT8H0M0S</Duration>
       <DurationFormat>7</DurationFormat>
       <Estimated>0</Estimated>
@@ -220,7 +220,7 @@
       <CalendarUID>1</CalendarUID>
       <Notes>SIMULATION PLAN ONLY; baseline V2; resource=developer; budget exported as fixed cost; resource assignments and actual execution are not exported.</Notes>
       <PredecessorLink>
-        <PredecessorUID>1803989619</PredecessorUID>
+        <PredecessorUID>1</PredecessorUID>
         <Type>1</Type>
         <CrossProject>0</CrossProject>
         <LinkLag>0</LinkLag>
@@ -228,16 +228,16 @@
       </PredecessorLink>
     </Task>
     <Task>
-      <UID>1083553374</UID>
+      <UID>5</UID>
       <ID>5</ID>
       <Name>Overdue reminders</Name>
       <Type>1</Type>
       <IsNull>0</IsNull>
-      <WBS>change.overdue_reminders</WBS>
+      <WBS>5</WBS>
       <OutlineNumber>5</OutlineNumber>
       <OutlineLevel>1</OutlineLevel>
-      <Start>2026-11-20T08:00:00</Start>
-      <Finish>2026-11-23T17:00:00</Finish>
+      <Start>2026-11-13T08:00:00</Start>
+      <Finish>2026-11-16T17:00:00</Finish>
       <Duration>PT16H0M0S</Duration>
       <DurationFormat>7</DurationFormat>
       <Estimated>0</Estimated>
@@ -251,14 +251,14 @@
       <CalendarUID>1</CalendarUID>
       <Notes>SIMULATION PLAN ONLY; baseline V2; resource=developer; budget exported as fixed cost; resource assignments and actual execution are not exported.</Notes>
       <PredecessorLink>
-        <PredecessorUID>1309098117</PredecessorUID>
+        <PredecessorUID>3</PredecessorUID>
         <Type>1</Type>
         <CrossProject>0</CrossProject>
         <LinkLag>0</LinkLag>
         <LagFormat>7</LagFormat>
       </PredecessorLink>
       <PredecessorLink>
-        <PredecessorUID>1260550007</PredecessorUID>
+        <PredecessorUID>4</PredecessorUID>
         <Type>1</Type>
         <CrossProject>0</CrossProject>
         <LinkLag>0</LinkLag>
