@@ -1,0 +1,1066 @@
+[
+  {
+    "id": "e8bdf912-a741-4dba-869e-c118be1f76ff",
+    "version": 1,
+    "previous_id": null,
+    "approval_id": "037a0ca8-fead-4d9b-8698-ed6eed82e035",
+    "artifact_id": "10e0c360-1d23-4542-9883-2fd1b29ba23d",
+    "effective_day": 0,
+    "content": {
+      "plan": {
+        "version": 1,
+        "tasks": [
+          {
+            "id": "1",
+            "title": "Activity Publishing",
+            "duration_days": 1,
+            "budget_cents": 80000,
+            "resource_id": "backend"
+          },
+          {
+            "id": "2",
+            "title": "Registration & Quota Management",
+            "duration_days": 1,
+            "budget_cents": 60000,
+            "resource_id": "frontend"
+          },
+          {
+            "id": "3",
+            "title": "Payment Sandbox",
+            "duration_days": 1,
+            "budget_cents": 80000,
+            "resource_id": "backend"
+          },
+          {
+            "id": "4",
+            "title": "E-Ticket Generation",
+            "duration_days": 1,
+            "budget_cents": 60000,
+            "resource_id": "frontend"
+          },
+          {
+            "id": "5",
+            "title": "Online Validation",
+            "duration_days": 1,
+            "budget_cents": 80000,
+            "resource_id": "backend"
+          },
+          {
+            "id": "6",
+            "title": "Integration Testing & Acceptance",
+            "duration_days": 1,
+            "budget_cents": 60000,
+            "resource_id": "frontend"
+          }
+        ],
+        "dependencies": [
+          {
+            "predecessor": "1",
+            "successor": "2",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "2",
+            "successor": "3",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "3",
+            "successor": "4",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "4",
+            "successor": "5",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "1",
+            "successor": "6",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "2",
+            "successor": "6",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "3",
+            "successor": "6",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "4",
+            "successor": "6",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "5",
+            "successor": "6",
+            "lag_days": 0
+          }
+        ],
+        "resources": [
+          {
+            "id": "backend",
+            "capacity": 1,
+            "rate_cents_per_day": 80000
+          },
+          {
+            "id": "frontend",
+            "capacity": 1,
+            "rate_cents_per_day": 60000
+          }
+        ]
+      },
+      "schedule": {
+        "duration_days": 6,
+        "tasks": {
+          "1": {
+            "es": 0,
+            "ef": 1,
+            "lf": 1,
+            "ls": 0,
+            "total_float": 0
+          },
+          "2": {
+            "es": 1,
+            "ef": 2,
+            "lf": 2,
+            "ls": 1,
+            "total_float": 0
+          },
+          "3": {
+            "es": 2,
+            "ef": 3,
+            "lf": 3,
+            "ls": 2,
+            "total_float": 0
+          },
+          "4": {
+            "es": 3,
+            "ef": 4,
+            "lf": 4,
+            "ls": 3,
+            "total_float": 0
+          },
+          "5": {
+            "es": 4,
+            "ef": 5,
+            "lf": 5,
+            "ls": 4,
+            "total_float": 0
+          },
+          "6": {
+            "es": 5,
+            "ef": 6,
+            "lf": 6,
+            "ls": 5,
+            "total_float": 0
+          }
+        },
+        "critical_task_ids": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "critical_edges": [
+          [
+            "1",
+            "2"
+          ],
+          [
+            "2",
+            "3"
+          ],
+          [
+            "3",
+            "4"
+          ],
+          [
+            "4",
+            "5"
+          ],
+          [
+            "5",
+            "6"
+          ]
+        ]
+      },
+      "effective_day": 0,
+      "impact": null,
+      "execution_transition": null
+    },
+    "content_hash": "2dbeae80d9efb04ffa8af706a07456d5fc32690a3cef51d6a9893568eb9d4cef"
+  },
+  {
+    "id": "b1a05749-96df-494d-a3cc-92e97caf8b69",
+    "version": 2,
+    "previous_id": "e8bdf912-a741-4dba-869e-c118be1f76ff",
+    "approval_id": "5902ca3f-54af-40e5-8094-f4c30f3b197b",
+    "artifact_id": "c93a6769-9653-4194-b4a7-9259689ea98b",
+    "effective_day": 1,
+    "content": {
+      "plan": {
+        "version": 2,
+        "tasks": [
+          {
+            "id": "1",
+            "title": "Activity Publishing",
+            "duration_days": 1,
+            "budget_cents": 80000,
+            "resource_id": "backend"
+          },
+          {
+            "id": "2",
+            "title": "Registration & Quota Management",
+            "duration_days": 1,
+            "budget_cents": 60000,
+            "resource_id": "frontend"
+          },
+          {
+            "id": "3",
+            "title": "Payment Sandbox",
+            "duration_days": 1,
+            "budget_cents": 80000,
+            "resource_id": "backend"
+          },
+          {
+            "id": "4",
+            "title": "E-Ticket Generation",
+            "duration_days": 1,
+            "budget_cents": 60000,
+            "resource_id": "frontend"
+          },
+          {
+            "id": "5",
+            "title": "Online Validation",
+            "duration_days": 1,
+            "budget_cents": 80000,
+            "resource_id": "backend"
+          },
+          {
+            "id": "6",
+            "title": "Integration Testing & Acceptance",
+            "duration_days": 1,
+            "budget_cents": 60000,
+            "resource_id": "frontend"
+          },
+          {
+            "id": "7",
+            "title": "Refund Application & Approval Simulation",
+            "duration_days": 1,
+            "budget_cents": 60000,
+            "resource_id": "frontend"
+          }
+        ],
+        "dependencies": [
+          {
+            "predecessor": "1",
+            "successor": "2",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "2",
+            "successor": "3",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "3",
+            "successor": "4",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "4",
+            "successor": "5",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "1",
+            "successor": "6",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "2",
+            "successor": "6",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "3",
+            "successor": "6",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "4",
+            "successor": "6",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "5",
+            "successor": "6",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "6",
+            "successor": "7",
+            "lag_days": 0
+          }
+        ],
+        "resources": [
+          {
+            "id": "backend",
+            "capacity": 1,
+            "rate_cents_per_day": 80000
+          },
+          {
+            "id": "frontend",
+            "capacity": 1,
+            "rate_cents_per_day": 60000
+          }
+        ]
+      },
+      "schedule": {
+        "duration_days": 7,
+        "tasks": {
+          "1": {
+            "es": 0,
+            "ef": 1,
+            "lf": 1,
+            "ls": 0,
+            "total_float": 0
+          },
+          "2": {
+            "es": 1,
+            "ef": 2,
+            "lf": 2,
+            "ls": 1,
+            "total_float": 0
+          },
+          "3": {
+            "es": 2,
+            "ef": 3,
+            "lf": 3,
+            "ls": 2,
+            "total_float": 0
+          },
+          "4": {
+            "es": 3,
+            "ef": 4,
+            "lf": 4,
+            "ls": 3,
+            "total_float": 0
+          },
+          "5": {
+            "es": 4,
+            "ef": 5,
+            "lf": 5,
+            "ls": 4,
+            "total_float": 0
+          },
+          "6": {
+            "es": 5,
+            "ef": 6,
+            "lf": 6,
+            "ls": 5,
+            "total_float": 0
+          },
+          "7": {
+            "es": 6,
+            "ef": 7,
+            "lf": 7,
+            "ls": 6,
+            "total_float": 0
+          }
+        },
+        "critical_task_ids": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7"
+        ],
+        "critical_edges": [
+          [
+            "1",
+            "2"
+          ],
+          [
+            "2",
+            "3"
+          ],
+          [
+            "3",
+            "4"
+          ],
+          [
+            "4",
+            "5"
+          ],
+          [
+            "5",
+            "6"
+          ],
+          [
+            "6",
+            "7"
+          ]
+        ]
+      },
+      "effective_day": 1,
+      "impact": {
+        "source_plan_version": 1,
+        "proposed_plan_version": 2,
+        "added_task_ids": [
+          "7"
+        ],
+        "removed_task_ids": [],
+        "changed_task_ids": [],
+        "source_bac_cents": 420000,
+        "proposed_bac_cents": 480000,
+        "delta_bac_cents": 60000,
+        "source_duration_days": 6,
+        "proposed_duration_days": 7,
+        "delta_duration_days": 1,
+        "proposed_schedule": {
+          "duration_days": 7,
+          "tasks": {
+            "1": {
+              "es": 0,
+              "ef": 1,
+              "lf": 1,
+              "ls": 0,
+              "total_float": 0
+            },
+            "2": {
+              "es": 1,
+              "ef": 2,
+              "lf": 2,
+              "ls": 1,
+              "total_float": 0
+            },
+            "3": {
+              "es": 2,
+              "ef": 3,
+              "lf": 3,
+              "ls": 2,
+              "total_float": 0
+            },
+            "4": {
+              "es": 3,
+              "ef": 4,
+              "lf": 4,
+              "ls": 3,
+              "total_float": 0
+            },
+            "5": {
+              "es": 4,
+              "ef": 5,
+              "lf": 5,
+              "ls": 4,
+              "total_float": 0
+            },
+            "6": {
+              "es": 5,
+              "ef": 6,
+              "lf": 6,
+              "ls": 5,
+              "total_float": 0
+            },
+            "7": {
+              "es": 6,
+              "ef": 7,
+              "lf": 7,
+              "ls": 6,
+              "total_float": 0
+            }
+          },
+          "critical_task_ids": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7"
+          ],
+          "critical_edges": [
+            [
+              "1",
+              "2"
+            ],
+            [
+              "2",
+              "3"
+            ],
+            [
+              "3",
+              "4"
+            ],
+            [
+              "4",
+              "5"
+            ],
+            [
+              "5",
+              "6"
+            ],
+            [
+              "6",
+              "7"
+            ]
+          ]
+        },
+        "accepted_task_ids": [
+          "1"
+        ],
+        "schedule_assumption": "Dependency-only CPM; resource waiting and remaining effort require runtime forecasting",
+        "execution_transition": {
+          "source_baseline_id": "e8bdf912-a741-4dba-869e-c118be1f76ff",
+          "source_day": 1,
+          "source_snapshot_hash": "9d2f5d76bd744a0488bca9e84911e8166a59598b0e1f774a877400b0269cad8a",
+          "pv_anchor": {
+            "day": 1,
+            "pv_cents": 80000,
+            "finish_day": 7,
+            "bac_cents": 480000,
+            "assumption": "Uniform remaining aggregate PV over dependency-only remaining forecast"
+          },
+          "remaining_forecast": {
+            "1": {
+              "start": 0,
+              "finish": 1
+            },
+            "2": {
+              "start": 1,
+              "finish": 2
+            },
+            "3": {
+              "start": 2,
+              "finish": 3
+            },
+            "4": {
+              "start": 3,
+              "finish": 4
+            },
+            "5": {
+              "start": 4,
+              "finish": 5
+            },
+            "6": {
+              "start": 5,
+              "finish": 6
+            },
+            "7": {
+              "start": 6,
+              "finish": 7
+            }
+          }
+        }
+      },
+      "execution_transition": {
+        "source_baseline_id": "e8bdf912-a741-4dba-869e-c118be1f76ff",
+        "source_day": 1,
+        "source_snapshot_hash": "9d2f5d76bd744a0488bca9e84911e8166a59598b0e1f774a877400b0269cad8a",
+        "pv_anchor": {
+          "day": 1,
+          "pv_cents": 80000,
+          "finish_day": 7,
+          "bac_cents": 480000,
+          "assumption": "Uniform remaining aggregate PV over dependency-only remaining forecast"
+        },
+        "remaining_forecast": {
+          "1": {
+            "start": 0,
+            "finish": 1
+          },
+          "2": {
+            "start": 1,
+            "finish": 2
+          },
+          "3": {
+            "start": 2,
+            "finish": 3
+          },
+          "4": {
+            "start": 3,
+            "finish": 4
+          },
+          "5": {
+            "start": 4,
+            "finish": 5
+          },
+          "6": {
+            "start": 5,
+            "finish": 6
+          },
+          "7": {
+            "start": 6,
+            "finish": 7
+          }
+        }
+      }
+    },
+    "content_hash": "2656bcb6280fa3efa408315830f51cfa7da73a5f69c808021d372b9eeb3a0cbe"
+  },
+  {
+    "id": "99ca6ec5-d62c-43b5-993b-1d3f2222ca51",
+    "version": 3,
+    "previous_id": "b1a05749-96df-494d-a3cc-92e97caf8b69",
+    "approval_id": "adb4cf5a-4950-40ad-b2e1-d576bbc58adb",
+    "artifact_id": "af811084-8ed8-4976-8310-489a5a0c801e",
+    "effective_day": 2,
+    "content": {
+      "plan": {
+        "version": 3,
+        "tasks": [
+          {
+            "id": "1",
+            "title": "Activity Publishing",
+            "duration_days": 1,
+            "budget_cents": 80000,
+            "resource_id": "backend"
+          },
+          {
+            "id": "2",
+            "title": "Registration & Quota Management",
+            "duration_days": 1,
+            "budget_cents": 60000,
+            "resource_id": "frontend"
+          },
+          {
+            "id": "3",
+            "title": "Payment Sandbox",
+            "duration_days": 1,
+            "budget_cents": 80000,
+            "resource_id": "backend"
+          },
+          {
+            "id": "4",
+            "title": "E-Ticket Generation",
+            "duration_days": 1,
+            "budget_cents": 60000,
+            "resource_id": "frontend"
+          },
+          {
+            "id": "5",
+            "title": "Online Validation",
+            "duration_days": 1,
+            "budget_cents": 80000,
+            "resource_id": "backend"
+          },
+          {
+            "id": "6",
+            "title": "Integration Testing & Acceptance",
+            "duration_days": 1,
+            "budget_cents": 60000,
+            "resource_id": "frontend"
+          },
+          {
+            "id": "7",
+            "title": "Refund Application & Approval Simulation",
+            "duration_days": 1,
+            "budget_cents": 60000,
+            "resource_id": "frontend"
+          },
+          {
+            "id": "8",
+            "title": "Offline Ticket Validation & Sync Simulation",
+            "duration_days": 1,
+            "budget_cents": 80000,
+            "resource_id": "backend"
+          }
+        ],
+        "dependencies": [
+          {
+            "predecessor": "1",
+            "successor": "2",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "2",
+            "successor": "3",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "3",
+            "successor": "4",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "4",
+            "successor": "5",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "1",
+            "successor": "6",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "2",
+            "successor": "6",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "3",
+            "successor": "6",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "4",
+            "successor": "6",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "5",
+            "successor": "6",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "6",
+            "successor": "7",
+            "lag_days": 0
+          },
+          {
+            "predecessor": "6",
+            "successor": "8",
+            "lag_days": 0
+          }
+        ],
+        "resources": [
+          {
+            "id": "backend",
+            "capacity": 1,
+            "rate_cents_per_day": 80000
+          },
+          {
+            "id": "frontend",
+            "capacity": 1,
+            "rate_cents_per_day": 60000
+          }
+        ]
+      },
+      "schedule": {
+        "duration_days": 7,
+        "tasks": {
+          "1": {
+            "es": 0,
+            "ef": 1,
+            "lf": 1,
+            "ls": 0,
+            "total_float": 0
+          },
+          "2": {
+            "es": 1,
+            "ef": 2,
+            "lf": 2,
+            "ls": 1,
+            "total_float": 0
+          },
+          "3": {
+            "es": 2,
+            "ef": 3,
+            "lf": 3,
+            "ls": 2,
+            "total_float": 0
+          },
+          "4": {
+            "es": 3,
+            "ef": 4,
+            "lf": 4,
+            "ls": 3,
+            "total_float": 0
+          },
+          "5": {
+            "es": 4,
+            "ef": 5,
+            "lf": 5,
+            "ls": 4,
+            "total_float": 0
+          },
+          "6": {
+            "es": 5,
+            "ef": 6,
+            "lf": 6,
+            "ls": 5,
+            "total_float": 0
+          },
+          "7": {
+            "es": 6,
+            "ef": 7,
+            "lf": 7,
+            "ls": 6,
+            "total_float": 0
+          },
+          "8": {
+            "es": 6,
+            "ef": 7,
+            "lf": 7,
+            "ls": 6,
+            "total_float": 0
+          }
+        },
+        "critical_task_ids": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8"
+        ],
+        "critical_edges": [
+          [
+            "1",
+            "2"
+          ],
+          [
+            "2",
+            "3"
+          ],
+          [
+            "3",
+            "4"
+          ],
+          [
+            "4",
+            "5"
+          ],
+          [
+            "5",
+            "6"
+          ],
+          [
+            "6",
+            "7"
+          ],
+          [
+            "6",
+            "8"
+          ]
+        ]
+      },
+      "effective_day": 2,
+      "impact": {
+        "source_plan_version": 2,
+        "proposed_plan_version": 3,
+        "added_task_ids": [
+          "8"
+        ],
+        "removed_task_ids": [],
+        "changed_task_ids": [],
+        "source_bac_cents": 480000,
+        "proposed_bac_cents": 560000,
+        "delta_bac_cents": 80000,
+        "source_duration_days": 7,
+        "proposed_duration_days": 7,
+        "delta_duration_days": 0,
+        "proposed_schedule": {
+          "duration_days": 7,
+          "tasks": {
+            "1": {
+              "es": 0,
+              "ef": 1,
+              "lf": 1,
+              "ls": 0,
+              "total_float": 0
+            },
+            "2": {
+              "es": 1,
+              "ef": 2,
+              "lf": 2,
+              "ls": 1,
+              "total_float": 0
+            },
+            "3": {
+              "es": 2,
+              "ef": 3,
+              "lf": 3,
+              "ls": 2,
+              "total_float": 0
+            },
+            "4": {
+              "es": 3,
+              "ef": 4,
+              "lf": 4,
+              "ls": 3,
+              "total_float": 0
+            },
+            "5": {
+              "es": 4,
+              "ef": 5,
+              "lf": 5,
+              "ls": 4,
+              "total_float": 0
+            },
+            "6": {
+              "es": 5,
+              "ef": 6,
+              "lf": 6,
+              "ls": 5,
+              "total_float": 0
+            },
+            "7": {
+              "es": 6,
+              "ef": 7,
+              "lf": 7,
+              "ls": 6,
+              "total_float": 0
+            },
+            "8": {
+              "es": 6,
+              "ef": 7,
+              "lf": 7,
+              "ls": 6,
+              "total_float": 0
+            }
+          },
+          "critical_task_ids": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ],
+          "critical_edges": [
+            [
+              "1",
+              "2"
+            ],
+            [
+              "2",
+              "3"
+            ],
+            [
+              "3",
+              "4"
+            ],
+            [
+              "4",
+              "5"
+            ],
+            [
+              "5",
+              "6"
+            ],
+            [
+              "6",
+              "7"
+            ],
+            [
+              "6",
+              "8"
+            ]
+          ]
+        },
+        "accepted_task_ids": [
+          "1",
+          "2"
+        ],
+        "schedule_assumption": "Dependency-only CPM; resource waiting and remaining effort require runtime forecasting",
+        "execution_transition": {
+          "source_baseline_id": "b1a05749-96df-494d-a3cc-92e97caf8b69",
+          "source_day": 2,
+          "source_snapshot_hash": "4f6383c213ca1df3dbab5f6b0f6fdd3b8bb102e7665a49edd3ce3d03982cf9b2",
+          "pv_anchor": {
+            "day": 2,
+            "pv_cents": 146666,
+            "finish_day": 7,
+            "bac_cents": 560000,
+            "assumption": "Uniform remaining aggregate PV over dependency-only remaining forecast"
+          },
+          "remaining_forecast": {
+            "1": {
+              "start": 0,
+              "finish": 1
+            },
+            "2": {
+              "start": 1,
+              "finish": 2
+            },
+            "3": {
+              "start": 2,
+              "finish": 3
+            },
+            "4": {
+              "start": 3,
+              "finish": 4
+            },
+            "5": {
+              "start": 4,
+              "finish": 5
+            },
+            "6": {
+              "start": 5,
+              "finish": 6
+            },
+            "7": {
+              "start": 6,
+              "finish": 7
+            },
+            "8": {
+              "start": 6,
+              "finish": 7
+            }
+          }
+        }
+      },
+      "execution_transition": {
+        "source_baseline_id": "b1a05749-96df-494d-a3cc-92e97caf8b69",
+        "source_day": 2,
+        "source_snapshot_hash": "4f6383c213ca1df3dbab5f6b0f6fdd3b8bb102e7665a49edd3ce3d03982cf9b2",
+        "pv_anchor": {
+          "day": 2,
+          "pv_cents": 146666,
+          "finish_day": 7,
+          "bac_cents": 560000,
+          "assumption": "Uniform remaining aggregate PV over dependency-only remaining forecast"
+        },
+        "remaining_forecast": {
+          "1": {
+            "start": 0,
+            "finish": 1
+          },
+          "2": {
+            "start": 1,
+            "finish": 2
+          },
+          "3": {
+            "start": 2,
+            "finish": 3
+          },
+          "4": {
+            "start": 3,
+            "finish": 4
+          },
+          "5": {
+            "start": 4,
+            "finish": 5
+          },
+          "6": {
+            "start": 5,
+            "finish": 6
+          },
+          "7": {
+            "start": 6,
+            "finish": 7
+          },
+          "8": {
+            "start": 6,
+            "finish": 7
+          }
+        }
+      }
+    },
+    "content_hash": "854a5e2f161714110f114ef4451658ff8da5dfbff1251273b9fea663d81d3ea0"
+  }
+]

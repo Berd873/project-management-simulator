@@ -1,0 +1,335 @@
+[
+  {
+    "id": "4cd5adf8-d4b1-46e0-9d07-b6649828b96e",
+    "source_baseline_id": "e8bdf912-a741-4dba-869e-c118be1f76ff",
+    "artifact_id": "c93a6769-9653-4194-b4a7-9259689ea98b",
+    "reason": "Approved by Sponsor for CR-01. Adding Refund Application module dependent on Integration Testing (Task 6).",
+    "impact": {
+      "source_plan_version": 1,
+      "proposed_plan_version": 2,
+      "added_task_ids": [
+        "7"
+      ],
+      "removed_task_ids": [],
+      "changed_task_ids": [],
+      "source_bac_cents": 420000,
+      "proposed_bac_cents": 480000,
+      "delta_bac_cents": 60000,
+      "source_duration_days": 6,
+      "proposed_duration_days": 7,
+      "delta_duration_days": 1,
+      "proposed_schedule": {
+        "duration_days": 7,
+        "tasks": {
+          "1": {
+            "es": 0,
+            "ef": 1,
+            "lf": 1,
+            "ls": 0,
+            "total_float": 0
+          },
+          "2": {
+            "es": 1,
+            "ef": 2,
+            "lf": 2,
+            "ls": 1,
+            "total_float": 0
+          },
+          "3": {
+            "es": 2,
+            "ef": 3,
+            "lf": 3,
+            "ls": 2,
+            "total_float": 0
+          },
+          "4": {
+            "es": 3,
+            "ef": 4,
+            "lf": 4,
+            "ls": 3,
+            "total_float": 0
+          },
+          "5": {
+            "es": 4,
+            "ef": 5,
+            "lf": 5,
+            "ls": 4,
+            "total_float": 0
+          },
+          "6": {
+            "es": 5,
+            "ef": 6,
+            "lf": 6,
+            "ls": 5,
+            "total_float": 0
+          },
+          "7": {
+            "es": 6,
+            "ef": 7,
+            "lf": 7,
+            "ls": 6,
+            "total_float": 0
+          }
+        },
+        "critical_task_ids": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7"
+        ],
+        "critical_edges": [
+          [
+            "1",
+            "2"
+          ],
+          [
+            "2",
+            "3"
+          ],
+          [
+            "3",
+            "4"
+          ],
+          [
+            "4",
+            "5"
+          ],
+          [
+            "5",
+            "6"
+          ],
+          [
+            "6",
+            "7"
+          ]
+        ]
+      },
+      "accepted_task_ids": [
+        "1"
+      ],
+      "schedule_assumption": "Dependency-only CPM; resource waiting and remaining effort require runtime forecasting",
+      "execution_transition": {
+        "source_baseline_id": "e8bdf912-a741-4dba-869e-c118be1f76ff",
+        "source_day": 1,
+        "source_snapshot_hash": "9d2f5d76bd744a0488bca9e84911e8166a59598b0e1f774a877400b0269cad8a",
+        "pv_anchor": {
+          "day": 1,
+          "pv_cents": 80000,
+          "finish_day": 7,
+          "bac_cents": 480000,
+          "assumption": "Uniform remaining aggregate PV over dependency-only remaining forecast"
+        },
+        "remaining_forecast": {
+          "1": {
+            "start": 0,
+            "finish": 1
+          },
+          "2": {
+            "start": 1,
+            "finish": 2
+          },
+          "3": {
+            "start": 2,
+            "finish": 3
+          },
+          "4": {
+            "start": 3,
+            "finish": 4
+          },
+          "5": {
+            "start": 4,
+            "finish": 5
+          },
+          "6": {
+            "start": 5,
+            "finish": 6
+          },
+          "7": {
+            "start": 6,
+            "finish": 7
+          }
+        }
+      }
+    },
+    "status": "applied",
+    "applied_baseline_id": "b1a05749-96df-494d-a3cc-92e97caf8b69"
+  },
+  {
+    "id": "e05f24c3-d1f7-4504-8eab-74f6f0c52981",
+    "source_baseline_id": "b1a05749-96df-494d-a3cc-92e97caf8b69",
+    "artifact_id": "af811084-8ed8-4976-8310-489a5a0c801e",
+    "reason": "Approving CR-02 to add Offline Validation & Anti-Duplicate Logic to support network outage scenarios. This feature requires its own implementation module separate from Online Validation. It is placed dependent on the Integration Testing milestone to ensure the core data models are stable before introducing complex sync states.",
+    "impact": {
+      "source_plan_version": 2,
+      "proposed_plan_version": 3,
+      "added_task_ids": [
+        "8"
+      ],
+      "removed_task_ids": [],
+      "changed_task_ids": [],
+      "source_bac_cents": 480000,
+      "proposed_bac_cents": 560000,
+      "delta_bac_cents": 80000,
+      "source_duration_days": 7,
+      "proposed_duration_days": 7,
+      "delta_duration_days": 0,
+      "proposed_schedule": {
+        "duration_days": 7,
+        "tasks": {
+          "1": {
+            "es": 0,
+            "ef": 1,
+            "lf": 1,
+            "ls": 0,
+            "total_float": 0
+          },
+          "2": {
+            "es": 1,
+            "ef": 2,
+            "lf": 2,
+            "ls": 1,
+            "total_float": 0
+          },
+          "3": {
+            "es": 2,
+            "ef": 3,
+            "lf": 3,
+            "ls": 2,
+            "total_float": 0
+          },
+          "4": {
+            "es": 3,
+            "ef": 4,
+            "lf": 4,
+            "ls": 3,
+            "total_float": 0
+          },
+          "5": {
+            "es": 4,
+            "ef": 5,
+            "lf": 5,
+            "ls": 4,
+            "total_float": 0
+          },
+          "6": {
+            "es": 5,
+            "ef": 6,
+            "lf": 6,
+            "ls": 5,
+            "total_float": 0
+          },
+          "7": {
+            "es": 6,
+            "ef": 7,
+            "lf": 7,
+            "ls": 6,
+            "total_float": 0
+          },
+          "8": {
+            "es": 6,
+            "ef": 7,
+            "lf": 7,
+            "ls": 6,
+            "total_float": 0
+          }
+        },
+        "critical_task_ids": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8"
+        ],
+        "critical_edges": [
+          [
+            "1",
+            "2"
+          ],
+          [
+            "2",
+            "3"
+          ],
+          [
+            "3",
+            "4"
+          ],
+          [
+            "4",
+            "5"
+          ],
+          [
+            "5",
+            "6"
+          ],
+          [
+            "6",
+            "7"
+          ],
+          [
+            "6",
+            "8"
+          ]
+        ]
+      },
+      "accepted_task_ids": [
+        "1",
+        "2"
+      ],
+      "schedule_assumption": "Dependency-only CPM; resource waiting and remaining effort require runtime forecasting",
+      "execution_transition": {
+        "source_baseline_id": "b1a05749-96df-494d-a3cc-92e97caf8b69",
+        "source_day": 2,
+        "source_snapshot_hash": "4f6383c213ca1df3dbab5f6b0f6fdd3b8bb102e7665a49edd3ce3d03982cf9b2",
+        "pv_anchor": {
+          "day": 2,
+          "pv_cents": 146666,
+          "finish_day": 7,
+          "bac_cents": 560000,
+          "assumption": "Uniform remaining aggregate PV over dependency-only remaining forecast"
+        },
+        "remaining_forecast": {
+          "1": {
+            "start": 0,
+            "finish": 1
+          },
+          "2": {
+            "start": 1,
+            "finish": 2
+          },
+          "3": {
+            "start": 2,
+            "finish": 3
+          },
+          "4": {
+            "start": 3,
+            "finish": 4
+          },
+          "5": {
+            "start": 4,
+            "finish": 5
+          },
+          "6": {
+            "start": 5,
+            "finish": 6
+          },
+          "7": {
+            "start": 6,
+            "finish": 7
+          },
+          "8": {
+            "start": 6,
+            "finish": 7
+          }
+        }
+      }
+    },
+    "status": "applied",
+    "applied_baseline_id": "99ca6ec5-d62c-43b5-993b-1d3f2222ca51"
+  }
+]

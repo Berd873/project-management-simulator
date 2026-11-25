@@ -97,6 +97,8 @@ class Runtime:
 
     def validated_call(self, state, node, role, provider, inputs, generate, validate):
         """Persist a successful decision before its business effects, replay without recalling LLM."""
+        if node in getattr(self,'repair_nodes',set()):
+            node=node+':repair1'
         input_hash = hashlib.sha256(json.dumps(inputs, sort_keys=True).encode()).hexdigest()
         for attempt in range(1, 4):
             with self.sessions() as s:

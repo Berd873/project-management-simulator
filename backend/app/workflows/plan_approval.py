@@ -47,7 +47,8 @@ class PlanApprovalWorkflow:
             project = session.get(Project,state['project_id'])
             human, mode = project.sponsor_mode.value == 'human', project.llm_mode.value
             target = {'target_id':artifact.id,'target_version':artifact.version}
-            evidence = {'plan':artifact.payload,'effective_day':state['effective_day']}
+            evidence = {'plan':artifact.payload,'effective_day':state['effective_day'],
+                'scheduling_policy':'This is a dependency-only CPM baseline, not a resource-leveled schedule. effective_day is a baseline boundary, NOT the start date of every task. Daily PM dispatch must serialize tasks that share a capacity-1 resource; apparent CPM overlap is handled by that dispatcher and is not by itself an infeasible plan. Review scope, rates, dependencies and stated simulation assumptions; retain independent approve/reject judgment.'}
             if state.get('change_id'):
                 change = session.get(ChangeRequest,state['change_id'])
                 evidence.update(reason=change.reason,impact=change.impact,source_baseline_id=change.source_baseline_id)

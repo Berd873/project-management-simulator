@@ -7,6 +7,11 @@ from pydantic import Field
 from .planning import Plan, ValueObject, cpm, evm
 
 
+class ScheduledChange(ValueObject):
+    day: int = Field(ge=1)
+    description: str = Field(min_length=1)
+
+
 class Scenario(ValueObject):
     version: str = 'lms-v1'
     forced_first_test_failures: list[str] = Field(default_factory=list)
@@ -18,6 +23,7 @@ class Scenario(ValueObject):
     final_acceptance: bool = False
     step_mode: bool = False
     change_description: str = 'Add overdue reminders'
+    scheduled_changes: list[ScheduledChange] = Field(default_factory=list)
 
 
 def initial_snapshot(plan: Plan, seed: int) -> dict:
@@ -117,7 +123,16 @@ def step(plan: Plan, previous: dict, scenario: Scenario, authorized_ids: list[st
             else:
                 progress['accepted_day'] = day + 1
                 emit('simulated_test_passed', task_id=key, attempt=progress['attempts'])
-    if scenario.change_trigger_day is not None and current['day'] >= scenario.change_trigger_day and not current['change_triggered']:
+    change_index = current.get('scheduled_change_index', 0)
+    if scenario.scheduled_changes and change_index < len(scenario.scheduled_changes):
+        request = scenario.scheduled_changes[change_index]
+        if current['day'] >= request.day and (not current['change_triggered'] or current.get('change_resolved')):
+            current['scheduled_change_index'] = change_index + 1
+            current['active_change_description'] = request.description
+            current['change_triggered'] = True
+            current['change_resolved'] = False
+            emit('change_requested', description=request.description, change_number=change_index+1, status='proposal_only')
+    if not scenario.scheduled_changes and scenario.change_trigger_day is not None and current['day'] >= scenario.change_trigger_day and not current['change_triggered']:
         current['change_triggered'] = True
         emit('change_requested', description=scenario.change_description, status='proposal_only')
     current['rng_state'] = rng.getstate()

@@ -1,0 +1,11 @@
+{
+  "started_at": "2026-11-24T15:13:29.107634+00:00",
+  "finished_at": "2026-11-24T15:37:13.326006+00:00",
+  "run_id": "29cf01fc-e98a-4736-9601-86e05d7139c0",
+  "model": "qwen3.7-flash",
+  "provider": "real:qwen3.7-flash",
+  "real_api_calls": 56,
+  "success": true,
+  "execution_mode": "simulation",
+  "note": "API调用真实；开发和测试成果为模拟；无Mock回退。"
+}

@@ -41,7 +41,7 @@ def plan_approval_router(runtime):
                 raise HTTPException(404,'Run not found')
             return [{'id':row.id,'source_baseline_id':row.source_baseline_id,'artifact_id':row.artifact_id,
                      'reason':row.reason,'impact':row.impact,'status':row.status,'applied_baseline_id':row.applied_baseline_id}
-                    for row in session.scalars(select(ChangeRequest).where(ChangeRequest.run_id==run_id).order_by(ChangeRequest.id))]
+                    for row in session.scalars(select(ChangeRequest).join(Baseline,ChangeRequest.source_baseline_id==Baseline.id).where(ChangeRequest.run_id==run_id).order_by(Baseline.version,ChangeRequest.id))]
 
     @router.post('/{run_id}/plan-approvals',status_code=202)
     def propose(run_id: str,payload: PlanProposal,background: BackgroundTasks,

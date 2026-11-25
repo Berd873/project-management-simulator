@@ -1,0 +1,531 @@
+{
+  "status": "completed",
+  "accepted": true,
+  "report": {
+    "title": "模拟项目结项与管理报告",
+    "execution_mode": "simulation",
+    "result_kind": "simulated_project",
+    "project_id": "2a704334-5774-446c-8a70-cc2cb335f850",
+    "project_name": "校园活动票务平台 · 真实模型双变更实验",
+    "run_id": "29cf01fc-e98a-4736-9601-86e05d7139c0",
+    "seed": 42,
+    "scenario_version": "campus-ticketing-v1",
+    "engine_version": "1",
+    "provider_versions": [
+      "real:qwen3.7-flash"
+    ],
+    "prompt_versions": [
+      "role-json-v4",
+      "role-json-v5"
+    ],
+    "agent_schema_version": 1,
+    "workflow_version": "simulation-v1",
+    "specification_refs": [
+      {
+        "id": "1e57999b-ad0d-43bd-a22e-d2a2db327c0d",
+        "kind": "change_spec",
+        "version": 1
+      },
+      {
+        "id": "a5243154-423c-44c4-82cd-834d2147b894",
+        "kind": "change_spec",
+        "version": 2
+      },
+      {
+        "id": "99efabf0-5f88-4c3a-86cf-186206f5a3b3",
+        "kind": "requirements_analyst",
+        "version": 1
+      }
+    ],
+    "performance_analysis": {
+      "assessment": "Project completed but over budget. PV=EV=BAC=560,000 cents. AC=620,000 cents. SPI=1.0. CPI=0.903. EAC=620,000 cents. VAC=-60,000 cents. All initial and added tasks are finished.",
+      "risks": [
+        "Final cost overrun of 60,000 cents (-9.3% variance) due to simulation costs or inefficiencies during change implementation."
+      ]
+    },
+    "simulation_days": 8,
+    "final_baseline_id": "99ca6ec5-d62c-43b5-993b-1d3f2222ca51",
+    "final_metrics": {
+      "baseline_version": 3,
+      "status_day": 8,
+      "pv_cents": 560000,
+      "ev_cents": 560000,
+      "ac_cents": 620000,
+      "bac_cents": 560000,
+      "sv_cents": 0,
+      "cv_cents": -60000,
+      "spi": "1",
+      "cpi": "0.9032258064516129032258064516",
+      "eac_cents": "620000.0000000000000000000000",
+      "etc_cents": "0E-22",
+      "vac_cents": "-60000.0000000000000000000000",
+      "undefined_reasons": {},
+      "forecast_assumption": "Future cost efficiency equals current CPI",
+      "execution_mode": "simulation",
+      "pv_assumption": "Uniform remaining aggregate PV over dependency-only remaining forecast",
+      "baseline_id": "99ca6ec5-d62c-43b5-993b-1d3f2222ca51"
+    },
+    "baseline_history": [
+      {
+        "id": "e8bdf912-a741-4dba-869e-c118be1f76ff",
+        "version": 1,
+        "effective_day": 0,
+        "hash": "2dbeae80d9efb04ffa8af706a07456d5fc32690a3cef51d6a9893568eb9d4cef"
+      },
+      {
+        "id": "b1a05749-96df-494d-a3cc-92e97caf8b69",
+        "version": 2,
+        "effective_day": 1,
+        "hash": "2656bcb6280fa3efa408315830f51cfa7da73a5f69c808021d372b9eeb3a0cbe"
+      },
+      {
+        "id": "99ca6ec5-d62c-43b5-993b-1d3f2222ca51",
+        "version": 3,
+        "effective_day": 2,
+        "hash": "854a5e2f161714110f114ef4451658ff8da5dfbff1251273b9fea663d81d3ea0"
+      }
+    ],
+    "change_history": [
+      {
+        "id": "4cd5adf8-d4b1-46e0-9d07-b6649828b96e",
+        "status": "applied",
+        "reason": "Approved by Sponsor for CR-01. Adding Refund Application module dependent on Integration Testing (Task 6).",
+        "impact": {
+          "source_plan_version": 1,
+          "proposed_plan_version": 2,
+          "added_task_ids": [
+            "7"
+          ],
+          "removed_task_ids": [],
+          "changed_task_ids": [],
+          "source_bac_cents": 420000,
+          "proposed_bac_cents": 480000,
+          "delta_bac_cents": 60000,
+          "source_duration_days": 6,
+          "proposed_duration_days": 7,
+          "delta_duration_days": 1,
+          "proposed_schedule": {
+            "duration_days": 7,
+            "tasks": {
+              "1": {
+                "es": 0,
+                "ef": 1,
+                "lf": 1,
+                "ls": 0,
+                "total_float": 0
+              },
+              "2": {
+                "es": 1,
+                "ef": 2,
+                "lf": 2,
+                "ls": 1,
+                "total_float": 0
+              },
+              "3": {
+                "es": 2,
+                "ef": 3,
+                "lf": 3,
+                "ls": 2,
+                "total_float": 0
+              },
+              "4": {
+                "es": 3,
+                "ef": 4,
+                "lf": 4,
+                "ls": 3,
+                "total_float": 0
+              },
+              "5": {
+                "es": 4,
+                "ef": 5,
+                "lf": 5,
+                "ls": 4,
+                "total_float": 0
+              },
+              "6": {
+                "es": 5,
+                "ef": 6,
+                "lf": 6,
+                "ls": 5,
+                "total_float": 0
+              },
+              "7": {
+                "es": 6,
+                "ef": 7,
+                "lf": 7,
+                "ls": 6,
+                "total_float": 0
+              }
+            },
+            "critical_task_ids": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7"
+            ],
+            "critical_edges": [
+              [
+                "1",
+                "2"
+              ],
+              [
+                "2",
+                "3"
+              ],
+              [
+                "3",
+                "4"
+              ],
+              [
+                "4",
+                "5"
+              ],
+              [
+                "5",
+                "6"
+              ],
+              [
+                "6",
+                "7"
+              ]
+            ]
+          },
+          "accepted_task_ids": [
+            "1"
+          ],
+          "schedule_assumption": "Dependency-only CPM; resource waiting and remaining effort require runtime forecasting",
+          "execution_transition": {
+            "source_baseline_id": "e8bdf912-a741-4dba-869e-c118be1f76ff",
+            "source_day": 1,
+            "source_snapshot_hash": "9d2f5d76bd744a0488bca9e84911e8166a59598b0e1f774a877400b0269cad8a",
+            "pv_anchor": {
+              "day": 1,
+              "pv_cents": 80000,
+              "finish_day": 7,
+              "bac_cents": 480000,
+              "assumption": "Uniform remaining aggregate PV over dependency-only remaining forecast"
+            },
+            "remaining_forecast": {
+              "1": {
+                "start": 0,
+                "finish": 1
+              },
+              "2": {
+                "start": 1,
+                "finish": 2
+              },
+              "3": {
+                "start": 2,
+                "finish": 3
+              },
+              "4": {
+                "start": 3,
+                "finish": 4
+              },
+              "5": {
+                "start": 4,
+                "finish": 5
+              },
+              "6": {
+                "start": 5,
+                "finish": 6
+              },
+              "7": {
+                "start": 6,
+                "finish": 7
+              }
+            }
+          }
+        },
+        "applied_baseline_id": "b1a05749-96df-494d-a3cc-92e97caf8b69"
+      },
+      {
+        "id": "e05f24c3-d1f7-4504-8eab-74f6f0c52981",
+        "status": "applied",
+        "reason": "Approving CR-02 to add Offline Validation & Anti-Duplicate Logic to support network outage scenarios. This feature requires its own implementation module separate from Online Validation. It is placed dependent on the Integration Testing milestone to ensure the core data models are stable before introducing complex sync states.",
+        "impact": {
+          "source_plan_version": 2,
+          "proposed_plan_version": 3,
+          "added_task_ids": [
+            "8"
+          ],
+          "removed_task_ids": [],
+          "changed_task_ids": [],
+          "source_bac_cents": 480000,
+          "proposed_bac_cents": 560000,
+          "delta_bac_cents": 80000,
+          "source_duration_days": 7,
+          "proposed_duration_days": 7,
+          "delta_duration_days": 0,
+          "proposed_schedule": {
+            "duration_days": 7,
+            "tasks": {
+              "1": {
+                "es": 0,
+                "ef": 1,
+                "lf": 1,
+                "ls": 0,
+                "total_float": 0
+              },
+              "2": {
+                "es": 1,
+                "ef": 2,
+                "lf": 2,
+                "ls": 1,
+                "total_float": 0
+              },
+              "3": {
+                "es": 2,
+                "ef": 3,
+                "lf": 3,
+                "ls": 2,
+                "total_float": 0
+              },
+              "4": {
+                "es": 3,
+                "ef": 4,
+                "lf": 4,
+                "ls": 3,
+                "total_float": 0
+              },
+              "5": {
+                "es": 4,
+                "ef": 5,
+                "lf": 5,
+                "ls": 4,
+                "total_float": 0
+              },
+              "6": {
+                "es": 5,
+                "ef": 6,
+                "lf": 6,
+                "ls": 5,
+                "total_float": 0
+              },
+              "7": {
+                "es": 6,
+                "ef": 7,
+                "lf": 7,
+                "ls": 6,
+                "total_float": 0
+              },
+              "8": {
+                "es": 6,
+                "ef": 7,
+                "lf": 7,
+                "ls": 6,
+                "total_float": 0
+              }
+            },
+            "critical_task_ids": [
+              "1",
+              "2",
+              "3",
+              "4",
+              "5",
+              "6",
+              "7",
+              "8"
+            ],
+            "critical_edges": [
+              [
+                "1",
+                "2"
+              ],
+              [
+                "2",
+                "3"
+              ],
+              [
+                "3",
+                "4"
+              ],
+              [
+                "4",
+                "5"
+              ],
+              [
+                "5",
+                "6"
+              ],
+              [
+                "6",
+                "7"
+              ],
+              [
+                "6",
+                "8"
+              ]
+            ]
+          },
+          "accepted_task_ids": [
+            "1",
+            "2"
+          ],
+          "schedule_assumption": "Dependency-only CPM; resource waiting and remaining effort require runtime forecasting",
+          "execution_transition": {
+            "source_baseline_id": "b1a05749-96df-494d-a3cc-92e97caf8b69",
+            "source_day": 2,
+            "source_snapshot_hash": "4f6383c213ca1df3dbab5f6b0f6fdd3b8bb102e7665a49edd3ce3d03982cf9b2",
+            "pv_anchor": {
+              "day": 2,
+              "pv_cents": 146666,
+              "finish_day": 7,
+              "bac_cents": 560000,
+              "assumption": "Uniform remaining aggregate PV over dependency-only remaining forecast"
+            },
+            "remaining_forecast": {
+              "1": {
+                "start": 0,
+                "finish": 1
+              },
+              "2": {
+                "start": 1,
+                "finish": 2
+              },
+              "3": {
+                "start": 2,
+                "finish": 3
+              },
+              "4": {
+                "start": 3,
+                "finish": 4
+              },
+              "5": {
+                "start": 4,
+                "finish": 5
+              },
+              "6": {
+                "start": 5,
+                "finish": 6
+              },
+              "7": {
+                "start": 6,
+                "finish": 7
+              },
+              "8": {
+                "start": 6,
+                "finish": 7
+              }
+            }
+          }
+        },
+        "applied_baseline_id": "99ca6ec5-d62c-43b5-993b-1d3f2222ca51"
+      }
+    ],
+    "scope_acceptance": [
+      {
+        "task_id": "1",
+        "title": "Activity Publishing",
+        "accepted_day": 1,
+        "acceptance_criteria": [
+          "Frontend displays activity list with details.",
+          "Backend stores activity data (Title, Time, Location, Capacity)."
+        ],
+        "simulated_test_attempts": 1
+      },
+      {
+        "task_id": "2",
+        "title": "Registration & Quota Management",
+        "accepted_day": 2,
+        "acceptance_criteria": [
+          "System validates remaining quota upon registration request.",
+          "Concurrent registrations do not exceed total capacity."
+        ],
+        "simulated_test_attempts": 1
+      },
+      {
+        "task_id": "3",
+        "title": "Payment Sandbox",
+        "accepted_day": 3,
+        "acceptance_criteria": [
+          "Simulated payment interface returns success/failure status codes.",
+          "No real financial transactions occur."
+        ],
+        "simulated_test_attempts": 1
+      },
+      {
+        "task_id": "4",
+        "title": "E-Ticket Generation",
+        "accepted_day": 4,
+        "acceptance_criteria": [
+          "Generate ticket with globally unique ID based on valid order.",
+          "Ticket ID is recognizable by validation system."
+        ],
+        "simulated_test_attempts": 1
+      },
+      {
+        "task_id": "5",
+        "title": "Online Validation",
+        "accepted_day": 5,
+        "acceptance_criteria": [
+          "Valid tickets pass validation once.",
+          "Invalid or duplicate tickets are rejected."
+        ],
+        "simulated_test_attempts": 1
+      },
+      {
+        "task_id": "6",
+        "title": "Integration Testing & Acceptance",
+        "accepted_day": 7,
+        "acceptance_criteria": [
+          "End-to-end flow (Publish -> Register -> Pay -> Generate -> Validate) passes without blocking.",
+          "Stability check performed before handling CR-01/CR-02 changes."
+        ],
+        "simulated_test_attempts": 2
+      },
+      {
+        "task_id": "7",
+        "title": "Refund Application & Approval Simulation",
+        "accepted_day": 8,
+        "acceptance_criteria": [
+          "Frontend displays refund request form tied to order ID.",
+          "Backend simulates approval workflow without real payment reversal."
+        ],
+        "simulated_test_attempts": 1
+      },
+      {
+        "task_id": "8",
+        "title": "Offline Ticket Validation & Sync Simulation",
+        "accepted_day": 8,
+        "acceptance_criteria": [
+          "Backend stores validation events locally when network is simulated as down.",
+          "System prevents duplicate redemption within a local validity window."
+        ],
+        "simulated_test_attempts": 1
+      }
+    ],
+    "management_lessons": [
+      "Resource constraints and rework explain variance from dependency-only CPM.",
+      "Approved changes retain baseline history and historical execution metrics."
+    ],
+    "limitations": [
+      "All deliverables and test outcomes concern simulation; no LMS source code was executed."
+    ],
+    "pm_recommendation": {
+      "recommendation": "request_acceptance",
+      "summary": "Project closure recommended. All 8 tasks completed. Final CPI 0.903 indicates cost overrun due to resource constraints and rework during changes. Lessons learned documented."
+    },
+    "sponsor_acceptance": {
+      "target_id": "a5c83bc7-71f8-4423-a667-0d2d4f7d657d",
+      "target_version": 1,
+      "decision": "approve",
+      "reason": "The simulation indicates that all project tasks (1 through 8) were successfully completed within the defined scope and schedule. Although the final CPI of 0.903 shows a cost overrun of 60,000 cents (-9.3% variance), this was driven by approved change requests (CR-01 and CR-02) and resource constraints inherent to the simulation environment. All acceptance criteria for deliverables are met, and lessons learned are documented. The project is functionally complete and ready for closure."
+    }
+  },
+  "approval": {
+    "id": "9c4a0cf9-01f5-4bc7-896c-5a68f7c292a0",
+    "target_id": "a5c83bc7-71f8-4423-a667-0d2d4f7d657d",
+    "target_version": 1,
+    "status": "approve",
+    "decision": {
+      "target_id": "a5c83bc7-71f8-4423-a667-0d2d4f7d657d",
+      "target_version": 1,
+      "decision": "approve",
+      "reason": "The simulation indicates that all project tasks (1 through 8) were successfully completed within the defined scope and schedule. Although the final CPI of 0.903 shows a cost overrun of 60,000 cents (-9.3% variance), this was driven by approved change requests (CR-01 and CR-02) and resource constraints inherent to the simulation environment. All acceptance criteria for deliverables are met, and lessons learned are documented. The project is functionally complete and ready for closure."
+    }
+  }
+}

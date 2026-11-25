@@ -1,0 +1,62 @@
+[
+  {
+    "id": "12e3f278-b159-4604-9f86-96c952bdd18d",
+    "target_id": "481ac86c-17fd-4e1a-abcc-ab8de0db0e56",
+    "target_version": 1,
+    "status": "approve",
+    "decision": {
+      "target_id": "481ac86c-17fd-4e1a-abcc-ab8de0db0e56",
+      "target_version": 1,
+      "decision": "approve",
+      "reason": "The project charter clearly defines the scope as a six-task Campus Event Ticketing simulation platform. The success criteria are specific and measurable, including end-to-end integration testing, handling of duplicate tickets/invalid inputs (REQ-02/REQ-05), and formal change management for CR-01 and CR-02. Constraints regarding fixed scope, resource capacity (Backend/Frontend), and cost estimates are explicitly stated. The stakeholder roles and responsibilities are well-defined, ensuring appropriate oversight and validation."
+    }
+  },
+  {
+    "id": "037a0ca8-fead-4d9b-8698-ed6eed82e035",
+    "target_id": "10e0c360-1d23-4542-9883-2fd1b29ba23d",
+    "target_version": 1,
+    "status": "approve",
+    "decision": {
+      "target_id": "10e0c360-1d23-4542-9883-2fd1b29ba23d",
+      "target_version": 1,
+      "decision": "approve",
+      "reason": "The plan specifies a dependency-only CPM baseline with explicit instructions that effective_day is a boundary and not a start date. It acknowledges that daily PM dispatch must serialize tasks sharing capacity-1 resources to handle apparent overlaps. The resource capacities (backend: 1, frontend: 1) and task assignments are consistent with this constraint. Dependencies are valid. Therefore, the plan is feasible under the stated assumptions."
+    }
+  },
+  {
+    "id": "5902ca3f-54af-40e5-8094-f4c30f3b197b",
+    "target_id": "c93a6769-9653-4194-b4a7-9259689ea98b",
+    "target_version": 2,
+    "status": "approve",
+    "decision": {
+      "target_id": "c93a6769-9653-4194-b4a7-9259689ea98b",
+      "target_version": 2,
+      "decision": "approve",
+      "reason": "The charter explicitly states the change was 'Approved by Sponsor for CR-01'. The proposal adds a single task (Task 7) dependent on Task 6 with no removed tasks. While the dependency-only CPM schedule indicates simultaneous execution requirements for resources that require runtime serialization (as noted in the scheduling policy), this is an expected condition handled by daily dispatch rather than a fundamental flaw in the plan's feasibility or scope. The delta BAC and duration increases are consistent with the added work."
+    }
+  },
+  {
+    "id": "adb4cf5a-4950-40ad-b2e1-d576bbc58adb",
+    "target_id": "af811084-8ed8-4976-8310-489a5a0c801e",
+    "target_version": 3,
+    "status": "approve",
+    "decision": {
+      "target_id": "af811084-8ed8-4976-8310-489a5a0c801e",
+      "target_version": 3,
+      "decision": "approve",
+      "reason": "The proposed Change Request (CR-02) logically introduces 'Offline Ticket Validation & Sync Simulation' (Task 8) to handle network outage scenarios. The task is correctly assigned to the backend resource with appropriate budgeting and duration. Dependencies place it after Integration Testing (Task 6), ensuring core models are stable before complex sync logic is added. While Task 7 and Task 8 both start at day 6 and require the same resource ('backend') with capacity 1, rendering the CPM schedule infeasible without further leveling, the scheduling policy explicitly states that daily dispatch will serialize these tasks and this overlap is not considered an infeasible plan structure on its own. The scope, rates, and dependency logic are sound."
+    }
+  },
+  {
+    "id": "9c4a0cf9-01f5-4bc7-896c-5a68f7c292a0",
+    "target_id": "a5c83bc7-71f8-4423-a667-0d2d4f7d657d",
+    "target_version": 1,
+    "status": "approve",
+    "decision": {
+      "target_id": "a5c83bc7-71f8-4423-a667-0d2d4f7d657d",
+      "target_version": 1,
+      "decision": "approve",
+      "reason": "The simulation indicates that all project tasks (1 through 8) were successfully completed within the defined scope and schedule. Although the final CPI of 0.903 shows a cost overrun of 60,000 cents (-9.3% variance), this was driven by approved change requests (CR-01 and CR-02) and resource constraints inherent to the simulation environment. All acceptance criteria for deliverables are met, and lessons learned are documented. The project is functionally complete and ready for closure."
+    }
+  }
+]

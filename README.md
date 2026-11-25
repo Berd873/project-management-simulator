@@ -91,3 +91,7 @@ pnpm run test:e2e
 | GET /api/v1/runs/{id}/export | 批准版本的 MSPDI XML |
 
 低层角色、计划审批和模拟 API 保留用于逐步教学；不要与同一项目的顶层交付操作混用。完整真实模型交付流程尚未外部验证；已验证模型发现、Sponsor 输出和审批调用，见 [真实模型连接记录](docs/real-provider-verification.md)。
+
+## 校园活动票务双变更工作交接
+
+真实API运行、回放启动、环境安装及组员接续工作见 [交接说明](docs/handoff.md)。已保存56次真实请求、47条有效决策、两次批准变更及三版基准。安装并构建前端后，可运行 `.\.venv\Scripts\python.exe scripts/serve_course_demo.py` 查看历史，无需API Key。

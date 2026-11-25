@@ -11,14 +11,15 @@ from .simulation import json_value
 
 def prepare_change(workflow,state):
     runtime=workflow.runtime
-    cached=runtime.receipt(state,'prepare_simulation_change')
+    receipt_key='prepare_simulation_change'+(f":{state['snapshot']['scheduled_change_index']}" if 'scheduled_change_index' in state['snapshot'] else '')
+    cached=runtime.receipt(state,receipt_key)
     if cached is not None:
         return cached
     snapshot=state['snapshot']
     with runtime.sessions() as session:
         source=session.get(Baseline,snapshot['baseline_id'])
         old=Plan.model_validate(source.content['plan'])
-        requested_change=session.get(SimulationRun,state['run_id']).scenario['change_description']
+        requested_change=snapshot.get('active_change_description') or session.get(SimulationRun,state['run_id']).scenario['change_description']
     from .execution_agents import call_role
     recommendation=call_role(runtime,state['run_id'],snapshot['day'],Role.PROJECT_MANAGER,'propose_change',
         {'requested_change':requested_change,'current_plan':old.model_dump(mode='json'),
@@ -46,19 +47,20 @@ def prepare_change(workflow,state):
         session.add(artifact)
         session.flush()
         accepted={key for key,p in snapshot['tasks'].items() if p['accepted_day'] is not None}
-        change=propose_change(session,run.id,source.id,artifact.id,'simulation-overdue-reminders',recommendation.payload['reason'],accepted,snapshot)
+        change=propose_change(session,run.id,source.id,artifact.id,f"simulation-change-{snapshot.get('scheduled_change_index', 0)}",recommendation.payload['reason'],accepted,snapshot)
         approval=Approval(run_id=run.id,target_id=artifact.id,target_version=version)
         session.add(approval)
         session.flush()
         inputs={'run_id':run.id,'project_id':run.project_id,'approval_id':approval.id,'artifact_id':artifact.id,
                 'change_id':change.id,'effective_day':snapshot['day'],'change_spec_id':spec.id}
         session.add(NodeReceipt(run_id=run.id,node=f'plan_approval_input:{approval.id}',patch=inputs))
-        return runtime.save(session,state,'prepare_simulation_change',{'change_approval_id':approval.id})
+        return runtime.save(session,state,receipt_key,{'change_approval_id':approval.id})
 
 
 def review_change(workflow,state):
     runtime=workflow.runtime
-    cached=runtime.receipt(state,'review_simulation_change')
+    receipt_key='review_simulation_change'+(f":{state['snapshot']['scheduled_change_index']}" if 'scheduled_change_index' in state['snapshot'] else '')
+    cached=runtime.receipt(state,receipt_key)
     if cached is not None:
         return cached
     approval_id=state['change_approval_id']
@@ -85,4 +87,4 @@ def review_change(workflow,state):
             snapshot['baseline_id']=baseline.id
         else:
             snapshot['change_resolved']=True
-        return runtime.save(session,state,'review_simulation_change',{'snapshot':json_value(snapshot)})
+        return runtime.save(session,state,receipt_key,{'snapshot':json_value(snapshot)})

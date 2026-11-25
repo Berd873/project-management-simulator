@@ -2,7 +2,7 @@ import json
 import os
 from typing import Protocol
 import httpx
-from .contracts import AgentContext, ApprovalDecision, DecisionEnvelope, output_schema
+from .contracts import AgentContext, ApprovalDecision, DecisionEnvelope, output_schema, validate_decision
 from ..domain import Role
 
 
@@ -103,7 +103,7 @@ class MockProvider:
 
 class RealProvider:
     """Configurable OpenAI-compatible JSON chat endpoint; never falls back to mock."""
-    prompt_version = 'role-json-v3'
+    prompt_version = 'role-json-v5'
     def __init__(self):
         self.model = os.getenv("LLM_MODEL", "")
         self.key = os.getenv("LLM_API_KEY", "")
@@ -126,8 +126,23 @@ class RealProvider:
         payload_schema = output_schema(context).model_json_schema()
         schema.setdefault('$defs', {}).update(payload_schema.pop('$defs', {}))
         schema['properties']['payload'] = payload_schema
+        schema['properties']['evidence_refs']={'type':'array','items':{'type':'string'},'maxItems':0}
         schema['properties']['role'] = {'const': context.role.value, 'type': 'string'}
-        return self.request(schema, context.model_dump_json())
+        inputs=context.model_dump(mode='json')
+        inputs['evidence_reference_policy']='Return evidence_refs as an empty array []. Source artifact IDs and input hashes are already preserved by the workflow; do not invent citation identifiers.'
+        if context.role==Role.PROGRESS_COST_ANALYST and context.operation=='proposal':
+            inputs['operation_instruction']='Return only aggregate initial Estimate fields assumptions, suggested_duration_days, suggested_budget_cents, status=proposal_only. Per-task resources/tasks are requested later in estimate_plan, not in this operation.'
+        if getattr(self,'validation_feedback',None):
+            inputs['validation_feedback']=self.validation_feedback
+        raw=self.request(schema,json.dumps(inputs,ensure_ascii=False))
+        try:
+            validate_decision(raw,context)
+            self.validation_feedback=None
+        except ValueError as exc:
+            # Feed a bounded validation reason into the next existing retry;
+            # runtime remains the authority and audits this invalid response.
+            self.validation_feedback=str(exc)[:1200]
+        return raw
 
     def approve(self, target, charter):
         return self.request(ApprovalDecision.model_json_schema(), json.dumps({'target': target, 'charter': charter}))
@@ -136,7 +151,7 @@ class RealProvider:
         with httpx.Client(timeout=self.timeout) as client:
             response = client.post(self.base + '/chat/completions', headers={"Authorization": f"Bearer {self.key}"}, json={
                 "model": self.model, "response_format": {"type": "json_object"}, "max_tokens": self.max_tokens,
-                "messages": [{"role": "system", "content": "Act only as the specified project role. Return exactly one JSON object matching this JSON Schema. Do not wrap it in schema, envelope, or result keys. evidence_refs may only repeat ids that already appear as values of artifact_refs in the input; when no such id applies return an empty array. Never invent identifiers. " + json.dumps(schema)},
+                "messages": [{"role": "system", "content": "Act only as the specified project role. Return exactly one JSON object matching this JSON Schema. Do not wrap it in schema, envelope, or result keys. evidence_refs may only repeat ids that already appear as values of artifact_refs in the input; when no such id applies return an empty array. Never invent identifiers. For dispatch, select only eligible_task_ids and respect each resource capacity; suggested_task_ids is a feasible reference. For execute and test_results, match expected_actions or expected_results exactly. If validation_feedback is present, correct that error rather than repeat the invalid decision. " + json.dumps(schema)},
                              {"role": "user", "content": content}],
             })
             response.raise_for_status()

@@ -108,6 +108,11 @@ class DeliveryWorkflow:
                     change_description=('Add booking cancellation notifications' if any(word in project.description.lower() for word in ['booking','预约'])
                         else 'Add overdue reminders' if any(word in project.description.lower() for word in ['library','图书'])
                         else 'Add an acceptance review checklist'))
+                if any(word in project.description.lower() for word in ['ticketing', '校园活动票务']):
+                    scenario=Scenario(version='campus-ticketing-v1',forced_first_test_failures=[sorted(ids)[-1]],
+                        formal_management=True,final_acceptance=True,step_mode=project.step_mode,
+                        scheduled_changes=[{'day':1,'description':'CR-01: 新增活动取消后的退款申请与审批记录；仅模拟退款，不连接真实支付。新增任务必须使用全新 ID，保留现有任务及依赖。'},
+                            {'day':2,'description':'CR-02: 新增离线验票及重复核销防护，网络恢复后同步核销记录；仅模拟。新增任务必须使用全新 ID，不修改现有任务及依赖。'}])
                 session.add(SimulationRun(run_id=run.id,plan=plan.model_dump(mode='json'),scenario=scenario.model_dump(mode='json'),
                     seed=session.get(Project,run.project_id).seed,schedule=json_value(cpm(plan))))
         self.runtime.simulation.drive(state['run_id'])
